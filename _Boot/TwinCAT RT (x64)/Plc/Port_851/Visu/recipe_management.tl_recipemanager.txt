@@ -1,0 +1,5 @@
+Id;Default;en;de
+CheckOverwriteTitel;Save as...;Save as...;Speichern unter...
+CheckOverwriteMessage;The file already exists. Do you want to overwrite the file? ;The file already exists. Do you want to overwrite the file? ;Die Datei ist bereits vorhanden. Möchten Sie die Datei überschreiben?
+CheckOverwriteBusy;Another client is saving a recipe at the moment. This action is canceled. ;Another client is saving a recipe at the moment. This action is canceled. ;Ein anderer Client speichert gerade eine Rezeptur. Diese Aktion wird abgebrochen.
+;;;

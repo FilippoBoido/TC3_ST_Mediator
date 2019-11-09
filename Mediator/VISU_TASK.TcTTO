@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
   <Task Name="VISU_TASK" Id="{542281ba-6eaf-4c6e-b161-740666f3792f}">
     <!--CycleTime in micro seconds.-->
-    <CycleTime>40000</CycleTime>
+    <CycleTime>200000</CycleTime>
     <Priority>30</Priority>
     <PouCall>
       <Name>VISU_PRG</Name>

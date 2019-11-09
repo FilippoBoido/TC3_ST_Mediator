@@ -1,0 +1,13 @@
+Id;Default
+0;No peer
+1;Debug 1
+2;Debug 2
+3;Schneiden
+4;Umlenkung
+5;Bereitstellung
+6;Conveyor 1
+7;Conveyor 2
+8;Conveyor 3
+9;Conveyor 4
+10;Conveyor 5
+;

@@ -1,0 +1,38 @@
+Id;Default
+677;%
+256;%s
+306;Close Logfile
+649;Conveyor 1
+572;Conveyor 2
+789;Conveyor 3
+508;Conveyor 4
+429;Conveyor Group
+921;Conveyor group
+377;Conveyor Small Group
+82;Conveyor small group
+875;Delivery Status
+774;DeliveryStatus
+824;Head
+965;Inbox
+526;Mailbox empty
+175;Mailbox Empty
+245;Mailbox full
+962;Mailbox Full
+431;MAIN.fbMediator.aPeersConnected[INDEX].bMailboxEmpty
+706;Message
+630;Message sent
+281;New message avail
+324;Nodes
+652;Outbox
+184;Peer
+749;Peer 1 send message to Peer 2
+330;Peer 2 send message to Peer 1
+629;Sending message
+58;Sensor 1
+499;Sensor 2
+859;Sensor 3
+285;Sensor 4
+724;Stack Pointer
+10;Start
+126;Stop
+818;Tail
