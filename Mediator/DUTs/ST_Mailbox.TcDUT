@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_Mailbox" Id="{fc68c8ef-a36d-4778-ae49-f4383c4a3f74}">
+    <Declaration><![CDATA[TYPE ST_Mailbox : 
+STRUCT
+	stInbox : ST_Message;
+	stOutbox : ST_Message;
+	bNewMessageAvail : BOOL;
+	bSendingMessage : BOOL;
+	bMessageSent : BOOL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

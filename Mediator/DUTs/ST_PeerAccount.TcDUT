@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_PeerAccount" Id="{e2451584-ebd0-455c-a1ee-312535270e33}">
+    <Declaration><![CDATA[TYPE ST_PeerAccount :
+STRUCT
+	iPeer : I_Peer;
+	fbMessagesList : FB_LinkedListCtrl;
+	nodes : ARRAY[1..nMAX_DATA_ELEMENTS] OF T_LinkedListEntry;
+	hList : T_HLINKEDLIST; //linked list handle
+	nStackPointer : UINT := 1;
+	rMailbox : REFERENCE TO ST_MAILBOX; 
+	bMailboxFull : BOOL;
+	bMailboxEmpty : BOOL := TRUE;
+	eDispatchRoutineReturnCode : E_MediatorReturnCode;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

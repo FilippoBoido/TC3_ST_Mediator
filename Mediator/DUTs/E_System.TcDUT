@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="E_System" Id="{9cbdcaae-8bba-46c6-8862-1167622e0048}">
+    <Declaration><![CDATA[TYPE E_System :
+(
+	NULL := 0
+)UINT;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

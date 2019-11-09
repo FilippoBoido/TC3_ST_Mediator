@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="E_MediatorReturnCode" Id="{7b2e9766-8083-4fba-957e-8c439044afae}">
+    <Declaration><![CDATA[//{attribute 'qualified_only'}
+//{attribute 'strict'}
+TYPE E_MediatorReturnCode :
+(
+	eNO_RETURN_CODE := 0,
+	ePEER_ALREADY_CONNECTED,
+	ePEER_CONNECTED,
+	eMAX_NUMBER_OF_CONNECTED_PEERS,
+	ePEER_NOT_FOUND,
+	eMESSAGE_DISPATCHED,
+	eMESSAGE_NOT_DISPATCHED,
+	eDISPATCHING_MESSAGE
+)UINT;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

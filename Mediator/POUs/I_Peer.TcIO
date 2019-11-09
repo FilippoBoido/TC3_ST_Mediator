@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.10">
+  <Itf Name="I_Peer" Id="{e04acc35-fb91-4348-b48e-e343565186b8}">
+    <Declaration><![CDATA[INTERFACE I_Peer
+]]></Declaration>
+    <Method Name="M_GetNextMessage" Id="{1a6ef703-eee9-435c-9ef0-98f62c2f7c59}">
+      <Declaration><![CDATA[METHOD M_GetNextMessage : ST_Message
+
+]]></Declaration>
+    </Method>
+    <Method Name="M_GetPeerId" Id="{f02657d8-ddc3-4ad8-b3ba-50ff9126fc39}">
+      <Declaration><![CDATA[METHOD M_GetPeerId : E_PeersList
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="M_IsNewMessageAvailable" Id="{2e2156c0-b0b5-410f-8fba-6ad78888e82f}">
+      <Declaration><![CDATA[METHOD M_IsNewMessageAvailable : BOOL
+]]></Declaration>
+    </Method>
+    <Method Name="M_RetrieveMailbox" Id="{a2ff8bbc-9da9-4a77-82ad-a7b27b282d3b}">
+      <Declaration><![CDATA[METHOD M_RetrieveMailbox : REFERENCE TO ST_MAILBOX
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="M_SendMessage" Id="{effcc211-358b-4696-97c0-67a752e4a06f}">
+      <Declaration><![CDATA[METHOD M_SendMessage : E_PeerReturnCode
+VAR_INPUT
+	in_stMessage : ST_Message;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

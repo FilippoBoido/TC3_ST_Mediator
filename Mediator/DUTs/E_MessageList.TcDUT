@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="E_MessageList" Id="{39c3407e-4fc3-4513-9700-64dbbdfc8b61}">
+    <Declaration><![CDATA[//{attribute 'qualified_only'}
+//{attribute 'strict'}
+TYPE E_MessageList :
+(
+	eNO_MESSAGE := 0,
+	eDEBUG_MESSAGE,
+	eVON_DRUCKTISCH_UEBERNOMMEN,
+	eAN_DRUCKTISCH_UEBERGEBEN,
+	eVON_UMLENKUNG_UEBERNOMMER,
+	eAN_UMLENKUNG_UEBERGEBEN,
+	eAN_SCHNEIDEN_UEBERGEN
+)UINT;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

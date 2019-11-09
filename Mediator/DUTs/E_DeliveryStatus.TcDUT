@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="E_DeliveryStatus" Id="{95188abe-cae3-4846-862f-00d85e739980}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_DeliveryStatus :
+(
+	eNO_DELIVERY_INFORMATION := 0,
+	eDELIVERY_OK,
+	eDELIVERY_REJECTED
+)UINT;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

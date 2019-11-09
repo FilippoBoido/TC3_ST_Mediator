@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="E_PeerReturnCode" Id="{fdfd7c77-c668-4faf-ad43-5fa11e34ca88}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_PeerReturnCode :
+(
+	eNO_RETURN_CODE := 0,
+	eMESSAGE_IN_OUTBOX,
+	eMAILBOX_BUSY,
+	eMAILBOX_EMPTIED,
+	eMAILBOX_EMPTY,
+	eNO_NEW_MESSAGE,
+	eMATCH_FOUND,
+	eNO_MATCH_FOUND
+)UINT;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
