@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.36">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
   <Task Name="PlcTask" Id="{0dd56d46-7fba-4633-839d-ab51e54590e2}">
     <!--CycleTime in micro seconds.-->
-    <CycleTime>10000</CycleTime>
+    <CycleTime>30000</CycleTime>
     <Priority>20</Priority>
     <PouCall>
-      <Name>MAIN</Name>
+      <Name>MEDIATOR_TEST</Name>
     </PouCall>
     <TaskFBGuid>{ac85aef8-113d-4ba4-9559-b16101cc0221}</TaskFBGuid>
     <Fb_init>{441f9533-ac79-48a2-9e3f-1c7cf13201eb}</Fb_init>
     <Fb_exit>{25498f06-33ed-4311-9d2e-01c2bc26d097}</Fb_exit>
     <CycleUpdate>{5d825fed-1b08-43c7-889d-eb030cd5355a}</CycleUpdate>
     <PostCycleUpdate>{4bffb4e8-8ccd-42fa-ad35-be332aec2bff}</PostCycleUpdate>
-    <ObjectProperties />
   </Task>
 </TcPlcObject>

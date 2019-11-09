@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
   <POU Name="FB_MessageLinkedList" Id="{0a675e83-a9f7-478c-a06d-302d55c7e31e}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_MessageLinkedList EXTENDS FB_GenericLinkedList
 VAR_INPUT
@@ -56,11 +56,20 @@ M_GetHeadMessage := stUnit^.pVoid;
     </Method>
     <Method Name="M_GetNextMessage" Id="{6aa4a480-4c10-4662-a778-e37cf54a11ac}">
       <Declaration><![CDATA[METHOD M_GetNextMessage : POINTER TO ST_Message
-VAR_INPUT
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[stUnit := SUPER^.M_GetNext();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetNextMessage := stUnit^.pVoid;
+
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="M_GetTailMessage" Id="{fb54e427-3cac-40e4-9bca-d1112e937033}">
@@ -101,6 +110,7 @@ M_GetTailMessage := stUnit^.pVoid;
       <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="FB_MessageLinkedList.M_GetNextMessage">
+      <LineId Id="9" Count="7" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_MessageLinkedList.M_GetTailMessage">

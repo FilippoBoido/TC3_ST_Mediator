@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <Itf Name="I_Module" Id="{f00a0672-edfb-4485-859b-c480ea244f69}">
+    <Declaration><![CDATA[INTERFACE I_Module
+]]></Declaration>
+    <Property Name="AccessModuleName" Id="{b3ee3530-aa25-49fe-b0de-5dfaf98beb46}">
+      <Declaration><![CDATA[PROPERTY AccessModuleName : String]]></Declaration>
+      <Get Name="Get" Id="{41360fad-073a-4389-9781-eb3b8b14ecec}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{f1fb4c81-ec1e-40ec-aa1d-906060691271}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+  </Itf>
+</TcPlcObject>

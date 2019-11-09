@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <GVL Name="GVL_Constants" Id="{c8178947-0536-41c7-b8c0-dc6291ef2c08}">
+    <Declaration><![CDATA[VAR_GLOBAL CONSTANT
+	nMAX_DATA_ELEMENTS : UINT := 4;
+	nACTUAL_NUM_PEERS : UINT := 4;
+	nMAX_PEER_NUMBER : UINT := 100;
+	nMAX_LOG_MESSAGES : UINT := 1000;
+	nAVAILABLE_MESSAGES : UINT := 13;
+	nAVAILABLE_PEERS : UINT := 5;
+	nAVAILABLE_DELIVERY_STATUSES : UINT := 5;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

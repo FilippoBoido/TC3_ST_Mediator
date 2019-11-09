@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="F_Message" Id="{ec0e6791-e369-4a98-a9a5-8239f1aa4efc}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Message : ST_Message
+VAR_INPUT
+	eMessage : E_MessageList;
+	eFromPeer : E_PeersList;
+	eToPeer : E_PeersList;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_Message.eMessage := eMessage;
+F_Message.eFromPeer := eFromPeer;
+F_Message.eToPeer := eToPeer;]]></ST>
+    </Implementation>
+    <LineIds Name="F_Message">
+      <LineId Id="7" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

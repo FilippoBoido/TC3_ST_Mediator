@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_Conveyor3Sequence" Id="{a7352d2f-9b9c-4200-a72c-eae1b60cd9bd}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Conveyor3Sequence IMPLEMENTS I_ConveyorSequence
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	nStep : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="M_ConveyorSequence" Id="{e3d35ed5-61b6-4cab-aba8-74f89d5199aa}">
+      <Declaration><![CDATA[
+METHOD M_ConveyorSequence : BOOL
+VAR_INPUT
+	in_rConveyor	: REFERENCE TO FB_Conveyor;
+END_VAR
+VAR
+	stMessage : ST_Message;
+	ePeerReturnCode : E_PeerReturnCode;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE nStep OF
+	
+	0 :
+ 
+		stMessage := 
+			F_Message(
+				eFromPeer := E_PeersList.ePEER_CONVEYOR_2,
+				eToPeer := E_PeersList.ePEER_CONVEYOR_3,
+				eMessage := E_MessageList.eCONVEYOR_2_AT_TRANSFER_POINT
+			);
+			
+		ePeerReturnCode := in_rConveyor.M_CompareMessageAndEmptyMailbox(stMessage);
+		
+		IF ePeerReturnCode = E_PeerReturnCode.eMATCH_FOUND THEN
+			in_rConveyor.M_StartConveyor();
+			nStep := 20;
+		END_IF
+		
+	20 :
+	
+		IF in_rConveyor.out_fbSensorStop.GetTriggerSignal THEN
+			in_rConveyor.M_StopConveyor();
+			nStep := 30;
+		END_IF
+		
+	30 :
+	
+		stMessage :=
+			F_Message(
+				eFromPeer := E_PeersList.ePEER_CONVEYOR_3,
+				eToPeer := E_PeersList.ePEER_CONVEYOR_4,
+				eMessage := E_MessageList.eCONVEYOR_3_AT_TRANSFER_POINT
+			);
+			
+		in_rConveyor.M_SendMessage(stMessage);
+ 		nStep := 40;
+	
+	40 : 
+	
+		stMessage := 
+			F_Message(
+				eFromPeer := E_PeersList.ePEER_CONVEYOR_2,
+				eToPeer := E_PeersList.ePEER_CONVEYOR_3,
+				eMessage := E_MessageList.eCONVEYOR_2_PACKAGE_DELIVERED
+			);
+			
+		ePeerReturnCode := in_rConveyor.M_CompareMessageAndEmptyMailbox(stMessage);
+		
+		IF ePeerReturnCode = E_PeerReturnCode.eMATCH_FOUND THEN
+			in_rConveyor.M_StartConveyor();
+			nStep := 50;
+		END_IF
+	
+	50: 
+			
+		IF in_rConveyor.out_fbSensorMaterialDispatch.GetTriggerSignal THEN
+			
+			stMessage := 
+				F_Message(
+					eFromPeer := E_PeersList.ePEER_CONVEYOR_3,
+					eToPeer := E_PeersList.ePEER_CONVEYOR_4,
+					eMessage := E_MessageList.eCONVEYOR_3_PACKAGE_DELIVERED
+				);
+				
+			in_rConveyor.M_StopConveyor();
+			in_rConveyor.M_SendMessage(stMessage);
+			nStep := 0;
+			
+		END_IF		
+				
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Conveyor3Sequence">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Conveyor3Sequence.M_ConveyorSequence">
+      <LineId Id="68" Count="69" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

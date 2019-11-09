@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <GVL Name="GTL" Id="{93a5fa9c-75c0-4c6e-b003-f37d5a9b78c3}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	gtlPeers : ARRAY[1..nAVAILABLE_PEERS] OF STRING;
+	gtlMessages : ARRAY[1..nAVAILABLE_MESSAGES] OF STRING;
+	gtlDeliveryStatus : ARRAY[1..nAVAILABLE_DELIVERY_STATUSES] OF STRING;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

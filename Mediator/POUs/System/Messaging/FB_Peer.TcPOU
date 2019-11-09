@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
   <POU Name="FB_Peer" Id="{649f05f2-f8f7-4321-84e7-57ddb4422002}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Peer (*EXTENDS FB_ComponentBase*) IMPLEMENTS I_Peer
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Peer IMPLEMENTS I_Peer
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -38,7 +38,7 @@ END_VAR]]></Declaration>
 	
 	stIncomingMessage := M_GetNextMessage();
 	IF 	stIncomingMessage.eMessage = in_stMessage.eMessage
-		AND stIncomingMessage.ePeer = in_stMessage.ePeer
+		AND stIncomingMessage.eFromPeer = in_stMessage.eFromPeer
 		THEN
 		
 		M_CompareMessage := E_PeerReturnCode.eMATCH_FOUND;
@@ -71,6 +71,8 @@ END_VAR]]></Declaration>
 IF M_CompareMessageAndEmptyMailbox = E_PeerReturnCode.eNO_MATCH_FOUND THEN
 	stMessage := M_GetNextMessage();
 	stMessage.eDeliveryStatus := E_DeliveryStatus.eDELIVERY_REJECTED;
+	stMessage.eToPeer := stMessage.eFromPeer;
+	stMessage.eFromPeer := M_GetPeerId();
 	eTmpEval := M_SendMessage(stMessage);
 END_IF
 
@@ -181,6 +183,8 @@ END_IF
       <LineId Id="12" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="16" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="32" Count="0" />
       <LineId Id="10" Count="1" />
       <LineId Id="18" Count="0" />
       <LineId Id="13" Count="0" />

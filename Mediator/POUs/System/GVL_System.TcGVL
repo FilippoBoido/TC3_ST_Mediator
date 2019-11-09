@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <GVL Name="GVL_System" Id="{b559e12f-fba4-47c6-aada-08bb316f5b43}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	fbLogList : FB_Logging;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

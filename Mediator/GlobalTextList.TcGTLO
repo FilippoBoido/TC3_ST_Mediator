@@ -1,10 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
   <GlobalTextList Name="GlobalTextList" Id="{07b5de35-a906-4ff4-86eb-4803b4be59a5}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="GlobalTextListObject">
           <l n="TextList" t="ArrayList" cet="TextListRow">
+            <o>
+              <v n="TextID">"677"</v>
+              <v n="TextDefault">"%"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"256"</v>
+              <v n="TextDefault">"%s"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"306"</v>
+              <v n="TextDefault">"Close Logfile"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"649"</v>
+              <v n="TextDefault">"Conveyor 1"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"572"</v>
+              <v n="TextDefault">"Conveyor 2"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"789"</v>
+              <v n="TextDefault">"Conveyor 3"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"508"</v>
+              <v n="TextDefault">"Conveyor 4"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"429"</v>
+              <v n="TextDefault">"Conveyor Group"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"921"</v>
+              <v n="TextDefault">"Conveyor group"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"377"</v>
+              <v n="TextDefault">"Conveyor Small Group"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"82"</v>
+              <v n="TextDefault">"Conveyor small group"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
             <o>
               <v n="TextID">"875"</v>
               <v n="TextDefault">"Delivery Status"</v>
@@ -13,6 +68,11 @@
             <o>
               <v n="TextID">"774"</v>
               <v n="TextDefault">"DeliveryStatus"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"824"</v>
+              <v n="TextDefault">"Head"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -91,15 +151,50 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"58"</v>
+              <v n="TextDefault">"Sensor 1"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"499"</v>
+              <v n="TextDefault">"Sensor 2"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"859"</v>
+              <v n="TextDefault">"Sensor 3"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"285"</v>
+              <v n="TextDefault">"Sensor 4"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"724"</v>
               <v n="TextDefault">"Stack Pointer"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
+            <o>
+              <v n="TextID">"10"</v>
+              <v n="TextDefault">"Start"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"126"</v>
+              <v n="TextDefault">"Stop"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"818"</v>
+              <v n="TextDefault">"Tail"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
           </l>
           <l n="Languages" t="ArrayList" />
-          <v n="GuidInit">{e1d7b675-8fbf-450a-86ba-288967dcc26f}</v>
-          <v n="GuidReInit">{0f9c22a4-204b-439f-aa9e-38981c8b9996}</v>
-          <v n="GuidExitX">{2d0d8e86-968b-485b-8ffd-5a1b673c3017}</v>
+          <v n="GuidInit">{ddfe35e5-5af3-4727-85dd-56771d9d0115}</v>
+          <v n="GuidReInit">{9e6aa171-51a6-4162-a2dd-31823c3c77d2}</v>
+          <v n="GuidExitX">{50439355-2f55-43ef-a84f-91017985f71e}</v>
         </o>
       </Data>
       <TypeList>

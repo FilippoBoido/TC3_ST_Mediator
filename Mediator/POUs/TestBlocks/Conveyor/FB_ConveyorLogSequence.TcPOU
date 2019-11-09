@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_ConveyorLogSequence" Id="{c7d7066e-2f5b-4868-9d6e-b1f392a4abcb}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ConveyorLogSequence IMPLEMENTS I_ConveyorSequence
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	nStep : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="M_ConveyorSequence" Id="{a7299fa3-e080-4d5f-b90b-062f9b103495}">
+      <Declaration><![CDATA[
+METHOD M_ConveyorSequence : BOOL
+VAR_INPUT
+	in_rConveyor	: REFERENCE TO FB_Conveyor;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE nStep OF
+	0: 
+		IF in_rConveyor.in_bStart THEN
+			in_rConveyor.in_bStart := FALSE;
+			in_rConveyor.M_StartConveyor();
+			nStep := 10;
+		END_IF
+		
+	10: 
+		IF in_rConveyor.out_fbSensorSignal.GetTriggerSignal THEN
+			fbLogList.M_Warning(
+				in_iModule:=in_rConveyor,
+				in_sMessage:='Material erfasst!'	
+			);
+		END_IF
+		
+		IF in_rConveyor.in_bStop THEN
+			in_rConveyor.in_bStop := FALSE;
+			in_rConveyor.M_StopConveyor();
+			nStep := 20;
+		END_IF
+ 
+	20:
+		
+		nStep := 30;
+	
+	30:
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_ConveyorLogSequence">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ConveyorLogSequence.M_ConveyorSequence">
+      <LineId Id="7" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="12" Count="2" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="4" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

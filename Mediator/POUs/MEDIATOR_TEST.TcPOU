@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="MEDIATOR_TEST" Id="{7a0b3f69-4d4b-40e6-a7dc-bf925c7fe6d4}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MEDIATOR_TEST
+VAR
+	fbRecipeManCommands : RecipeManCommands;
+	aLogUnits : ARRAY[1..nMAX_LOG_MESSAGES] OF ST_LinkedListUnit;
+	aLogMessages :  ARRAY[1..nMAX_LOG_MESSAGES] OF T_MaxString;
+	i : INT;
+
+	bTest : BOOL;
+	bCloseFile : BOOL; 
+//--------------------------------------------------------------------------------------------------------------------------------------------
+	fbMediator : FB_Mediator;
+	aMediatorInitReturnCodes : ARRAY[1..GVL_Constants.nACTUAL_NUM_PEERS] OF BOOL;
+	
+	aConveyorPeers : ARRAY[1..GVL_Constants.nACTUAL_NUM_PEERS] OF FB_Conveyor;
+	aConveyorPeerSequence : ARRAY[1..GVL_Constants.nACTUAL_NUM_PEERS] OF FB_ConveyorPeerSequence;
+	
+	fbConveyor1Sequence : FB_Conveyor1Sequence;
+	fbConveyor2Sequence : FB_Conveyor2Sequence;
+	fbConveyor3Sequence : FB_Conveyor3Sequence;
+	fbConveyor4Sequence : FB_Conveyor4Sequence;
+	
+	rConveyor1 : REFERENCE TO FB_Conveyor;
+	rConveyor2 : REFERENCE TO FB_Conveyor;
+	rConveyor3 : REFERENCE TO FB_Conveyor;
+	rConveyor4 : REFERENCE TO FB_Conveyor;
+	
+	
+	{attribute 'OPC.UA.DA' := '1'}
+	bInit : BOOL;
+	nMainI : UINT;
+	
+	(*
+	//fbCutPeer : FB_Peer(E_PeersList.ePEER_SCHNEIDEN);
+	fbDebugPeer1 : FB_Peer(E_PeersList.ePEER_DEBUG_1);
+	fbDebugPeer2 : FB_Peer(E_PeersList.ePEER_DEBUG_2);
+	
+	eMediatorReturnCode : E_MediatorReturnCode;
+	
+	bPeer1SendMessage : BOOL;
+	bPeer2SendMessage : BOOL;
+ 	*)
+	//DEBUG
+
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bCloseFile THEN
+	bCloseFile := FALSE;
+	fbLogList.M_CloseFile();
+END_IF
+
+fbMediator();
+//fbRecipeManCommands();
+
+IF NOT bInit THEN
+	
+	fbRecipeManCommands.
+		LoadAndWriteRecipe(
+			RecipeDefinitionName := 'PeersList',
+			RecipeName := 'GTL'
+		);
+		
+	fbMediator.AccessModuleName := 'Mediator';
+	rConveyor1 REF= aConveyorPeers[1];
+	rConveyor1.M_RegisterSequence(fbConveyor1Sequence);
+	rConveyor1.AccessModuleName := GTL.gtlPeers[E_PeersList.ePEER_CONVEYOR_1];
+	rConveyor2 REF= aConveyorPeers[2];
+	rConveyor2.M_RegisterSequence(fbConveyor2Sequence);
+	rConveyor3 REF= aConveyorPeers[3];
+	rConveyor3.M_RegisterSequence(fbConveyor3Sequence);
+	rConveyor4 REF= aConveyorPeers[4];
+	rConveyor4.M_RegisterSequence(fbConveyor4Sequence);
+	
+	rConveyor1.eSetPeerId := E_PeersList.ePEER_CONVEYOR_1;
+	rConveyor2.eSetPeerId := E_PeersList.ePEER_CONVEYOR_2;
+	rConveyor3.eSetPeerId := E_PeersList.ePEER_CONVEYOR_3; 
+	rConveyor4.eSetPeerId := E_PeersList.ePEER_CONVEYOR_4; 
+	
+	FOR nMainI := 1 TO GVL_Constants.nACTUAL_NUM_PEERS DO 
+		aMediatorInitReturnCodes[nMainI] S= 
+			(fbMediator.M_AddPeer(aConveyorPeers[nMainI]) = E_MediatorReturnCode.ePEER_CONNECTED);
+		//aConveyorPeers[nMainI].M_RegisterSequence(aConveyorPeerSequence[nMainI]);
+		aConveyorPeers[nMainI].in_bSystemStart := TRUE;
+	END_FOR	
+	
+	IF 	aMediatorInitReturnCodes[1]  
+		AND aMediatorInitReturnCodes[2]
+		AND aMediatorInitReturnCodes[3]
+		AND aMediatorInitReturnCodes[4]
+		THEN
+			bInit := TRUE;
+	END_IF
+ELSE
+	
+	FOR nMainI := 1 TO GVL_Constants.nACTUAL_NUM_PEERS DO 
+		aConveyorPeers[nMainI]();
+	END_FOR	
+	
+END_IF
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MEDIATOR_TEST">
+      <LineId Id="274" Count="1" />
+      <LineId Id="408" Count="0" />
+      <LineId Id="410" Count="0" />
+      <LineId Id="409" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="461" Count="1" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="463" Count="0" />
+      <LineId Id="451" Count="0" />
+      <LineId Id="456" Count="4" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="504" Count="0" />
+      <LineId Id="514" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="511" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="512" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="513" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="149" Count="3" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="157" Count="1" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="201" Count="1" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="206" Count="1" />
+      <LineId Id="209" Count="1" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="197" Count="1" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="259" Count="1" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="187" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

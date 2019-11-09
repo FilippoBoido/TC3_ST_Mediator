@@ -1,0 +1,679 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_Logging" Id="{0ddc09a0-4eb9-4a53-8266-294b658832e4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Logging EXTENDS FB_GenericLinkedList
+VAR_INPUT
+	in_sPath : T_MaxString;
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	
+	fbFileOpen : FB_FileOpen;
+	fbFileWrite : FB_FileWrite;
+	fbFileClose : FB_FileClose;
+	
+	fbSystemTime : NT_GetTime;
+	stTime : TIMESTRUCT;
+	stTimeStrings : ST_TimeStrings;
+	sTimeString : STRING;
+	nLenghtOfTimeString : INT;
+	nWriteSize : UINT;
+	fbWhiteSpaces : FB_WhiteSpaces;
+	
+	bLogInit : BOOL;
+	nInitStep : UINT;
+	
+	aTmpBuffer : ARRAY[1..nMAX_LOG_MESSAGES] OF T_MaxString;
+	aByteBuffer : ARRAY[1..nMAX_LOG_MESSAGES*256] OF BYTE;
+	aZeroByteBuffer : ARRAY[1..nMAX_LOG_MESSAGES*256] OF BYTE;
+	nByteBufferSP : UINT := 1;
+	
+	nEntriesToWrite : UINT;
+	bLogOverflow : BOOL;
+	bOverflowSignaled : BOOL;
+	nLinesOverflow : UINT;
+	
+	eCurrentLoggingSeverity : E_LoggingSeverity;
+	
+	fbGetCurTaskIdx  : GETCURTASKINDEX;
+    nCycleCount      : UDINT;
+	
+END_VAR
+VAR CONSTANT
+	sLogOverflow : T_MAXSTRING := 'Log overflow detected:';
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[M_Cyclic();
+M_CheckOverflow();
+
+IF M_Init() THEN
+	M_WriteToFile();
+END_IF
+]]></ST>
+    </Implementation>
+    <Property Name="AccessLoggingSeverity" Id="{2cc7b3f6-33ec-4635-a911-63413ab8ef4d}">
+      <Declaration><![CDATA[PROPERTY AccessLoggingSeverity : E_LoggingSeverity]]></Declaration>
+      <Get Name="Get" Id="{320f6b33-c5ac-44e6-9ca7-86d571a6e340}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AccessLoggingSeverity := eCurrentLoggingSeverity;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{37e2c875-bf4c-4e47-a04e-cf87739d395b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[eCurrentLoggingSeverity := AccessLoggingSeverity;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="M_AddMessageToHead" Id="{e2642394-b717-41c7-9801-eb1799bae2e8}">
+      <Declaration><![CDATA[METHOD M_AddMessageToHead : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+	pMessageToAdd : POINTER TO T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnitToAdd^.pVoid := pMessageToAdd;
+SUPER^.M_AddToHead(pUnitToAdd);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_AddMessageToTail" Id="{e61df1b7-3036-4e7f-800e-51587938d7f7}">
+      <Declaration><![CDATA[METHOD M_AddMessageToTail : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+	pMessageToAdd : POINTER TO T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnitToAdd^.pVoid := pMessageToAdd;
+SUPER^.M_AddToTail(pUnitToAdd);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_CheckOverflow" Id="{1896ca2e-a7a1-4848-bb1c-c7488b8df72e}">
+      <Declaration><![CDATA[METHOD M_CheckOverflow : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bLogOverflow THEN
+	
+	bLogOverflow := FALSE;
+	
+ 	ADSLOGDINT(
+		msgCtrlMask := ADSLOG_MSGTYPE_ERROR,
+		msgFmtStr := CONCAT(sLogOverflow,' %d lines.'),		
+		dintArg := nLinesOverflow
+	);
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_CloseFile" Id="{86e65a1f-d50c-4b6d-b0a7-2729a7572d9d}">
+      <Declaration><![CDATA[METHOD M_CloseFile : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbFileClose(bExecute := TRUE);
+fbFileClose.bExecute := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Cyclic" Id="{44b9bd8c-c4ff-40d4-a70a-7e91da9acfef}">
+      <Declaration><![CDATA[METHOD M_Cyclic : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbGetCurTaskIdx();
+nCycleCount := _TaskInfo[fbGetCurTaskIdx.index].CycleCount;
+
+fbSystemTime(
+	NETID:= , 
+	START:= NOT fbSystemTime.start, 
+	TMOUT:= , 
+	BUSY=> , 
+	ERR=> , 
+	ERRID=> , 
+	TIMESTR=> stTime);
+
+M_FormatTimeToString();	
+
+fbFileOpen(
+	sNetId:= , 
+	sPathName:= in_sPath, 
+	nMode:= FOPEN_MODEAPPEND OR FOPEN_MODETEXT, 
+	ePath:= , 
+	bExecute:= , 
+	tTimeout:= , 
+	bBusy=> , 
+	bError=> , 
+	nErrId=> , 
+	hFile=> fbFileWrite.hFile);
+	
+fbFileWrite(
+	sNetId:= , 
+	hFile:= , 
+	pWriteBuff:=, 
+	cbWriteLen:= , 
+	bExecute:= FALSE, 
+	tTimeout:= , 
+	bBusy=> , 
+	bError=> , 
+	nErrId=> , 
+	cbWrite=> 
+);
+
+fbFileClose(
+	sNetId:= , 
+	hFile:= fbFileOpen.hFile, 
+	bExecute:= , 
+	tTimeout:= , 
+	bBusy=> , 
+	bError=> , 
+	nErrId=> );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Debug" Id="{99849a65-9189-478c-935d-6eb5c4dd770c}">
+      <Declaration><![CDATA[METHOD M_Debug : BOOL
+VAR_INPUT
+	in_sMessage : T_MaxString;
+	in_iModule : I_Module;
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+	pMessage : POINTER TO T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	NOT M_SeverityCheck(eDEBUG)
+	OR in_iModule = NULL
+ 	THEN
+		
+	RETURN;
+	
+END_IF
+
+nEntriesToWrite := nEntriesToWrite + 1;
+
+IF nEntriesToWrite > nMAX_LOG_MESSAGES THEN
+	RETURN;
+END_IF
+
+stUnit := M_GetNext();
+pMessage := stUnit^.pVoid;
+
+pMessage^ := F_Concat4( 'DEBUG:;' , in_iModule.AccessModuleName ,';', in_sMessage);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Error" Id="{99813d01-8878-4fa7-af08-b4181d43c680}">
+      <Declaration><![CDATA[METHOD M_Error : BOOL
+VAR_INPUT
+	in_sMessage : T_MaxString;
+	in_iModule : I_Module;
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+	pMessage : POINTER TO T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	NOT M_SeverityCheck(eERROR)
+	OR in_iModule = NULL
+ 	THEN
+		
+	RETURN;
+	
+END_IF
+
+nEntriesToWrite := nEntriesToWrite + 1;
+
+IF nEntriesToWrite > nMAX_LOG_MESSAGES THEN
+	RETURN;
+END_IF
+
+stUnit := M_GetNext();
+pMessage := stUnit^.pVoid;
+
+pMessage^ := F_Concat4( 'ERROR:;' , in_iModule.AccessModuleName ,';', in_sMessage);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_FormatTimeToString" Id="{5ba21775-66ff-43f2-8135-0e3c11e91b6b}">
+      <Declaration><![CDATA[METHOD M_FormatTimeToString 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stTimeStrings.sYear := WORD_TO_STRING(stTime.wYear);
+stTimeStrings.sMonth := WORD_TO_STRING(stTime.wMonth);
+stTimeStrings.sDayOfWeek := WORD_TO_STRING(stTime.wDayOfWeek);
+stTimeStrings.sDay := WORD_TO_STRING(stTime.wDay);
+stTimeStrings.sHour := WORD_TO_STRING(stTime.wHour);
+stTimeStrings.sMinute := WORD_TO_STRING(stTime.wMinute);
+stTimeStrings.sSecond := WORD_TO_STRING(stTime.wSecond);
+stTimeStrings.sMilliseconds := WORD_TO_STRING(stTime.wMilliseconds);
+
+sTimeString := 
+	F_Concat10(
+		stTimeStrings.sYear,
+		'.',
+		stTimeStrings.sMonth,
+		'.',
+		stTimeStrings.sDay,
+		' | ',
+		stTimeStrings.sHour,
+		':',
+		stTimeStrings.sMinute,
+		':'
+	);
+	
+sTimeString := 
+	F_Concat4(
+		sTimeString,
+		stTimeStrings.sSecond,
+		':',
+		stTimeStrings.sMilliseconds
+	);
+	
+nLenghtOfTimeString := LEN(sTimeString);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetHeadMessage" Id="{f4b42fde-2bb8-47ae-b7a1-e223990ebf05}">
+      <Declaration><![CDATA[METHOD M_GetHeadMessage : POINTER TO T_MaxString
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetHead();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetHeadMessage := stUnit^.pVoid;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetNextMessage" Id="{90e294b2-8f7c-42bb-aac2-d4d5343f2089}">
+      <Declaration><![CDATA[METHOD M_GetNextMessage : POINTER TO T_MaxString
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetNext();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetNextMessage := stUnit^.pVoid;
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetTailMessage" Id="{b3a27ec1-d2aa-44fe-92d4-c5fb1c670939}">
+      <Declaration><![CDATA[METHOD M_GetTailMessage : POINTER TO T_MaxString
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetTail();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetTailMessage := stUnit^.pVoid;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Info" Id="{00fcf617-d95e-43e2-91cb-897315680b9d}">
+      <Declaration><![CDATA[METHOD M_Info : BOOL
+VAR_INPUT
+	in_sMessage : T_MaxString;
+	in_iModule : I_Module;
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+	pMessage : POINTER TO T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	NOT M_SeverityCheck(eINFO)
+	OR in_iModule = NULL
+ 	THEN
+		
+	RETURN;
+	
+END_IF
+
+nEntriesToWrite := nEntriesToWrite + 1;
+
+IF nEntriesToWrite > nMAX_LOG_MESSAGES THEN
+	RETURN;
+END_IF
+
+stUnit := M_GetNext();
+pMessage := stUnit^.pVoid;
+
+pMessage^ := F_Concat4( 'INFO:;' , in_iModule.AccessModuleName ,';', in_sMessage);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Init" Id="{d008bab5-8ae8-4ee3-80e2-45b30b2eddad}">
+      <Declaration><![CDATA[METHOD M_Init : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	i : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE nInitStep OF
+	
+	0: 
+		fbFileOpen.bExecute := TRUE;
+		nInitStep := 20;
+		
+	20:
+		IF NOT fbFileOpen.bBusy THEN
+			nInitStep := 30;
+		END_IF
+		
+	30: 
+		bLogInit := TRUE;
+		M_Init := TRUE;
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Log" Id="{ec91fa56-7a50-4994-b926-a038d7bcbe8a}">
+      <Declaration><![CDATA[METHOD M_Log : BOOL
+VAR_INPUT
+	in_sMessage : T_MaxString;
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+	pMessage : POINTER TO T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nEntriesToWrite := nEntriesToWrite + 1;
+
+IF nEntriesToWrite > nMAX_LOG_MESSAGES THEN
+	RETURN;
+END_IF
+
+stUnit := M_GetNext();
+pMessage := stUnit^.pVoid;
+
+pMessage^ := in_sMessage;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_SeverityCheck" Id="{5446acc2-377a-48bf-838e-4908432c292e}">
+      <Declaration><![CDATA[METHOD M_SeverityCheck : BOOL
+VAR_INPUT
+	eCallerSeverity : E_LoggingSeverity;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_SeverityCheck := (eCurrentLoggingSeverity=eCallerSeverity) OR (eCurrentLoggingSeverity=eALL);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_Warning" Id="{c5d1662e-3376-4e18-ae02-135a7a092d87}">
+      <Declaration><![CDATA[METHOD M_Warning : BOOL
+VAR_INPUT
+	in_sMessage : T_MaxString;
+	in_iModule : I_Module;
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+	pMessage : POINTER TO T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	NOT M_SeverityCheck(eWARNING)
+	OR in_iModule = NULL
+ 	THEN
+		
+	RETURN;
+	
+END_IF
+
+nEntriesToWrite := nEntriesToWrite + 1;
+
+IF nEntriesToWrite > nMAX_LOG_MESSAGES THEN
+	RETURN;
+END_IF
+
+stUnit := M_GetNext();
+pMessage := stUnit^.pVoid;
+
+pMessage^ := F_Concat4( 'WARNING:;' , in_iModule.AccessModuleName ,';', in_sMessage);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_WriteToFile" Id="{d111e58f-423a-42b1-a8f0-f1135de30e2e}">
+      <Declaration><![CDATA[METHOD M_WriteToFile : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	i : UINT;
+	j : UINT;
+	pBuffer : POINTER TO T_MaxString;
+	nSizeOfString : INT;
+	nSizeToFill : INT;
+	sFillString : STRING;
+	
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check how many lines have been logged
+IF nEntriesToWrite > nMAX_LOG_MESSAGES THEN
+	nLinesOverflow := nEntriesToWrite - nMAX_LOG_MESSAGES;
+	nEntriesToWrite := nMAX_LOG_MESSAGES;
+	bLogOverflow := TRUE;
+END_IF
+
+IF 	NOT fbFileWrite.bBusy 
+	AND nEntriesToWrite > 0 
+	AND nEntriesToWrite <= nMAX_LOG_MESSAGES 
+	THEN
+
+	MEMCPY(ADR(aByteBuffer),ADR(aZeroByteBuffer),SIZEOF(aZeroByteBuffer));
+	//Use LEN to calculate the size of the string
+	FOR i := 1 TO nEntriesToWrite DO
+		
+		pBuffer := M_GetHead()^.pVoid;
+		
+		aTmpBuffer[i] := F_Concat6(pBuffer^,';',sTimeString,';',UDINT_TO_STRING(nCycleCount),'$N');
+		
+		MEMCPY(ADR(aByteBuffer[nByteBufferSP]),ADR(aTmpBuffer[i]),LEN(aTmpBuffer[i]));
+		nByteBufferSP := nByteBufferSP + INT_TO_UINT(LEN(aTmpBuffer[i]));
+
+		M_RelocateHeadToTail();
+		
+	END_FOR
+	
+	fbFileWrite(
+		bExecute:= TRUE,
+		pWriteBuff := ADR(aByteBuffer),
+		cbWriteLen := nByteBufferSP
+	);
+	
+	nEntriesToWrite := 0;
+	nByteBufferSP := 1;
+	
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Logging">
+      <LineId Id="23" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.AccessLoggingSeverity.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.AccessLoggingSeverity.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_AddMessageToHead">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_AddMessageToTail">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_CheckOverflow">
+      <LineId Id="10" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="3" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_CloseFile">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Cyclic">
+      <LineId Id="66" Count="0" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="46" Count="6" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="6" Count="9" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="10" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="33" Count="7" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Debug">
+      <LineId Id="12" Count="16" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Error">
+      <LineId Id="12" Count="16" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_FormatTimeToString">
+      <LineId Id="5" Count="4" />
+      <LineId Id="11" Count="2" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="10" />
+      <LineId Id="28" Count="4" />
+      <LineId Id="34" Count="2" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="37" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_GetHeadMessage">
+      <LineId Id="5" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="13" Count="3" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_GetNextMessage">
+      <LineId Id="9" Count="7" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_GetTailMessage">
+      <LineId Id="6" Count="0" />
+      <LineId Id="14" Count="2" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Info">
+      <LineId Id="11" Count="16" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Init">
+      <LineId Id="7" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="16" Count="3" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="23" Count="1" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Log">
+      <LineId Id="20" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="29" Count="2" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_SeverityCheck">
+      <LineId Id="19" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_Warning">
+      <LineId Id="23" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="13" Count="8" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Logging.M_WriteToFile">
+      <LineId Id="5" Count="0" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="56" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

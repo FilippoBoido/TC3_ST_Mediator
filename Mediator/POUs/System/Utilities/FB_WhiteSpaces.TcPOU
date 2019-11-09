@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_WhiteSpaces" Id="{9cb5ef31-20f8-45bc-84eb-aecd12ded6a1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_WhiteSpaces
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	sWhiteSpace : T_MaxString;
+END_VAR
+VAR
+	bInit : BOOL;
+	i : UINT;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInit THEN
+	bInit := TRUE;
+	FOR i := 1 TO SIZEOF(T_MAXSTRING) DO
+		sWhiteSpace := Concat(sWhiteSpace,' ');
+	END_FOR
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_WhiteSpaces">
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

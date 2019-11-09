@@ -1,16 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
-  <DUT Name="E_DeliveryStatus" Id="{95188abe-cae3-4846-862f-00d85e739980}">
+  <DUT Name="E_ConveyorPeerSequence" Id="{59cee76a-a01b-4a73-9dda-f339ecb96e72}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
-TYPE E_DeliveryStatus :
+TYPE E_ConveyorPeerSequence :
 (
-	eNO_DELIVERY_INFORMATION := 1,
-	eDELIVERY_OK,
-	eDELIVERY_REJECTED,
-	eRECEIVERS_MAILBOX_NOT_EMPTY,
-	ePEER_NOT_FOUND
-)UINT;
+	eIDLE := 0,
+	eSTOP,
+	eSTART,
+	eHOME,
+	eWAIT_FOR_ACK,
+	eSTOP_AT_SIGNAL,
+	eRESUME_OPERATION,
+	eEND_SEQUENCE
+);
 END_TYPE
 ]]></Declaration>
   </DUT>

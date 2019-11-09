@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="CONVEYOR_TEST" Id="{7de298fd-c80a-4230-98dc-28c8c7c281a2}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM CONVEYOR_TEST
+VAR
+	bInit : BOOL;
+	bCloseFile : BOOL;
+	
+	i : INT;
+	aLogUnits : ARRAY[1..nMAX_LOG_MESSAGES] OF ST_LinkedListUnit;
+	aLogMessages :  ARRAY[1..nMAX_LOG_MESSAGES] OF T_MaxString;
+	
+	aConveyors : ARRAY[1..8] OF FB_Conveyor;
+	aSequences : ARRAY[1..8] OF FB_ConveyorLogSequence;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbLogList.M_InitLinkedList(aLogUnits);
+fbLogList(in_sPath := GVL_SystemParams.sLogPath);
+
+IF NOT bInit THEN
+	bInit := TRUE;
+	
+	fbLogList.AccessLoggingSeverity := eALL;
+	
+	FOR i := 1 TO nMAX_LOG_MESSAGES DO
+		aLogUnits[i].pVoid := ADR(aLogMessages[i]);
+		fbLogList.M_AddToTail(ADR(aLogUnits[i]));
+	END_FOR
+	
+	FOR i := 1 TO 8 DO
+		aConveyors[i].AccessModuleName := CONCAT('Modul ', INT_TO_STRING(i));
+		aConveyors[i].M_RegisterSequence(aSequences[i]);
+		aConveyors[i].in_bSystemStart := TRUE;
+	END_FOR
+END_IF
+
+FOR i := 1 TO 8 DO
+	aConveyors[i]();
+END_FOR
+
+IF bCloseFile THEN
+	bCloseFile := FALSE;
+	fbLogList.M_CloseFile();
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="CONVEYOR_TEST">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="2" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="13" Count="2" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="32" Count="2" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="51" Count="3" />
+      <LineId Id="50" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

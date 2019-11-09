@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_ConveyorPeerSequence" Id="{9535a82b-99de-4536-9474-8a23e333c65a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ConveyorPeerSequence IMPLEMENTS I_ConveyorSequence
+VAR_INPUT
+
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	nStep : E_ConveyorPeerSequence;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="M_ConveyorAction" Id="{9cd03c54-3668-4377-af34-5b4f618835e8}">
+      <Declaration><![CDATA[METHOD M_ConveyorAction : BOOL
+VAR_INPUT
+	in_stFirstMessage : ST_Message;
+	in_stMessageToWaitFor : ST_Message;
+	in_stSecondMessage : ST_Message;
+	in_rConveyor : REFERENCE TO FB_Conveyor;
+END_VAR
+VAR_INST
+	nConveyorActionStep : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE nConveyorActionStep OF
+	
+	0:
+		IF 	in_rConveyor.M_SendMessage
+			(	
+				in_stFirstMessage
+			) 
+			= E_PeerReturnCode.eMESSAGE_IN_OUTBOX 
+			THEN
+			
+			nConveyorActionStep := 10;
+			
+		END_IF
+		
+	10:
+		
+	
+		IF 	in_rConveyor.M_CompareMessageAndEmptyMailbox
+			(	
+				in_stMessageToWaitFor
+			) 
+			= E_PeerReturnCode.eMATCH_FOUND 
+			THEN
+			
+			nConveyorActionStep := 20;
+			
+		END_IF
+
+	20:
+		
+		IF 	in_rConveyor.M_SendMessage
+			(	
+				in_stSecondMessage
+			) 
+			= E_PeerReturnCode.eMESSAGE_IN_OUTBOX 
+			THEN
+			
+			nConveyorActionStep := 0;
+			M_ConveyorAction := TRUE;
+			
+		END_IF
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_ConveyorSequence" Id="{57fbfd93-eff7-400b-9875-503f49d69ce5}">
+      <Declaration><![CDATA[
+METHOD M_ConveyorSequence : BOOL
+VAR_INPUT
+	in_rConveyor : REFERENCE TO FB_Conveyor;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE nStep OF
+	
+	E_ConveyorPeerSequence.eIDLE:
+	
+		IF in_rConveyor.in_bStart THEN
+			nStep := E_ConveyorPeerSequence.eSTART;
+		END_IF
+				
+	E_ConveyorPeerSequence.eSTART:
+		
+		in_rConveyor.M_StartConveyor();
+		nStep := E_ConveyorPeerSequence.eSTOP_AT_SIGNAL;
+
+	E_ConveyorPeerSequence.eSTOP_AT_SIGNAL:
+	
+		IF in_rConveyor.out_fbSensorStop.GetTriggerSignal THEN
+			in_rConveyor.M_StopConveyor();
+			nStep := E_ConveyorPeerSequence.eWAIT_FOR_ACK;
+		END_IF
+	
+	E_ConveyorPeerSequence.eWAIT_FOR_ACK:
+		
+		IF M_SubjectiveAction(in_rConveyor) THEN
+			nStep := E_ConveyorPeerSequence.eRESUME_OPERATION;
+		END_IF
+	
+	E_ConveyorPeerSequence.eRESUME_OPERATION:
+		
+		in_rConveyor.M_StartConveyor();
+		IF in_rConveyor.out_fbSensorMaterialDispatch.GetTriggerSignal THEN
+			in_rConveyor.M_StopConveyor();
+			nStep := E_ConveyorPeerSequence.eEND_SEQUENCE;
+		END_IF
+	
+	E_ConveyorPeerSequence.eEND_SEQUENCE:
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_SubjectiveAction" Id="{b3807608-e155-4afb-a89a-458a50a4675f}">
+      <Declaration><![CDATA[METHOD M_SubjectiveAction : BOOL
+VAR_INPUT
+	in_rConveyor : REFERENCE TO FB_Conveyor;
+END_VAR
+
+VAR
+	stFirstMessageToSend : ST_Message;
+	stMessageToWaitFor : ST_Message;
+	stSecondMessageToSend : ST_Message;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE in_rConveyor.M_GetPeerId() OF
+
+	E_PeersList.ePEER_CONVEYOR_1:
+	
+		stFirstMessageToSend :=
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_1,
+				eToPeer := ePEER_CONVEYOR_2,
+				eMessage := eCONVEYOR_1_AT_TRANSFER_POINT
+			);
+			
+		stMessageToWaitFor := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_4,
+				eToPeer := ePEER_CONVEYOR_1,
+				eMessage := eCONVEYOR_4_AT_TRANSFER_POINT
+			);
+			
+		stSecondMessageToSend := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_1,
+				eToPeer := ePEER_CONVEYOR_2,
+				eMessage := eCONVEYOR_1_RESUMING_OPERATION
+			);
+			
+	E_PeersList.ePEER_CONVEYOR_2:
+		
+		stFirstMessageToSend :=
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_2,
+				eToPeer := ePEER_CONVEYOR_3,
+				eMessage := eCONVEYOR_2_AT_TRANSFER_POINT
+			);
+			
+		stMessageToWaitFor := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_1,
+				eToPeer := ePEER_CONVEYOR_2,
+				eMessage := eCONVEYOR_1_RESUMING_OPERATION
+			);
+			
+		stSecondMessageToSend := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_2,
+				eToPeer := ePEER_CONVEYOR_3,
+				eMessage := eCONVEYOR_2_RESUMING_OPERATION
+			);	
+	
+	E_PeersList.ePEER_CONVEYOR_3:
+	
+		stFirstMessageToSend :=
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_3,
+				eToPeer := ePEER_CONVEYOR_4,
+				eMessage := eCONVEYOR_3_AT_TRANSFER_POINT
+			);
+			
+		stMessageToWaitFor := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_2,
+				eToPeer := ePEER_CONVEYOR_3,
+				eMessage := eCONVEYOR_2_RESUMING_OPERATION
+			);
+			
+		stSecondMessageToSend := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_3,
+				eToPeer := ePEER_CONVEYOR_4,
+				eMessage := eCONVEYOR_3_RESUMING_OPERATION
+			);
+	
+	E_PeersList.ePEER_CONVEYOR_4:
+	
+		stFirstMessageToSend :=
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_4,
+				eToPeer := ePEER_CONVEYOR_1,
+				eMessage := eCONVEYOR_4_AT_TRANSFER_POINT
+			);
+			
+		stMessageToWaitFor := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_3,
+				eToPeer := ePEER_CONVEYOR_4,
+				eMessage := eCONVEYOR_3_RESUMING_OPERATION
+			);
+			
+		stSecondMessageToSend := 
+			F_Message(
+				eFromPeer := ePEER_CONVEYOR_4,
+				eToPeer := ePEER_NO_PEER,
+				eMessage := eNO_MESSAGE
+			);	
+
+END_CASE
+
+M_SubjectiveAction := 
+	M_ConveyorAction(
+		in_rConveyor := in_rConveyor,
+		in_stFirstMessage := stFirstMessageToSend,
+		in_stMessageToWaitFor := stMessageToWaitFor,
+		in_stSecondMessage := stSecondMessageToSend
+	);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_ConveyorPeerSequence">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ConveyorPeerSequence.M_ConveyorAction">
+      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="41" Count="7" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="52" Count="1" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="30" Count="9" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="8" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ConveyorPeerSequence.M_ConveyorSequence">
+      <LineId Id="5" Count="2" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="49" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="3" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="18" Count="3" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="36" Count="2" />
+      <LineId Id="40" Count="2" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ConveyorPeerSequence.M_SubjectiveAction">
+      <LineId Id="5" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="149" Count="4" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="156" Count="3" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="162" Count="1" />
+      <LineId Id="165" Count="3" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="174" Count="19" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="201" Count="19" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="239" Count="18" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="231" Count="6" />
+      <LineId Id="230" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

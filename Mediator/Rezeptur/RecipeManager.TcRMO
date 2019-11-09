@@ -1,0 +1,529 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <RecipeManager Name="RecipeManager" Id="{64801bda-881b-4057-a61c-74e4aa45e049}">
+    <XmlArchive>
+      <Data>
+        <o xml:space="preserve" t="RecipeManObject">
+          <o n="LMGuids" t="LanguageModelGuidHelper">
+            <d n="NamesAndGuids" t="Hashtable" ckt="String" cvt="Guid">
+              <v>GVL_RECIPEMANAGEMENT_3300</v>
+              <v>dcfbc927-2988-4b9f-8889-f8e4e6f86dda</v>
+              <v>RECIPEFACTORY</v>
+              <v>93b2801a-f23d-4239-8a5d-7d5046a64798</v>
+              <v>RECIPEMANAGEMENTINITFB_INIT</v>
+              <v>ec1878d5-b141-446a-b93e-677229b11a93</v>
+              <v>RECIPEFACTORYFREERECIPE</v>
+              <v>f8be717a-8bc6-43da-af8b-b0e58c10b1d3</v>
+              <v>RECIPEFACTORYFB_INIT</v>
+              <v>32ac7a63-b3cb-43f0-aa23-44e2d091c886</v>
+              <v>RECIPEMANAGEMENTINITFB_REINIT</v>
+              <v>66b94d01-0fee-4e11-b9cf-3e81dedbdfce</v>
+              <v>RECIPEMANAGEMENTINIT</v>
+              <v>0e743e07-c84c-4416-b247-be2b58a382cd</v>
+              <v>RECIPEMANAGEMENTINITINITIALIZE</v>
+              <v>96039177-7912-4679-9a18-4485a1f4a71c</v>
+              <v>RECIPEFACTORYCREATERECIPE</v>
+              <v>ae93045d-8c79-4401-a336-64de15fff944</v>
+            </d>
+          </o>
+          <o n="StorageSettings" t="RecipeManagerStorageSettings">
+            <v n="StorageType">1U</v>
+            <v n="LoadType">0U</v>
+            <v n="FileExtension">".csv"</v>
+            <v n="FilePath">"C:\MachineRecipe"</v>
+            <v n="TokenSeparator">";"</v>
+            <v n="ColumnList">"0|1"</v>
+            <v n="AutoSaveRecipes">true</v>
+          </o>
+          <v n="RecipesInPlc">true</v>
+          <v n="RecipesInPlcAssigned">false</v>
+        </o>
+      </Data>
+      <TypeList>
+        <Type n="Boolean">System.Boolean</Type>
+        <Type n="Guid">System.Guid</Type>
+        <Type n="Hashtable">System.Collections.Hashtable</Type>
+        <Type n="LanguageModelGuidHelper">{3bce4913-f2c1-4b54-84e8-6d7ec1809176}</Type>
+        <Type n="RecipeManagerStorageSettings">{9af4bea6-fc90-45e0-8fd7-eb50506b56da}</Type>
+        <Type n="RecipeManObject">{09ecc42e-586d-4a08-932f-5bdcac20bb55}</Type>
+        <Type n="String">System.String</Type>
+        <Type n="UInt32">System.UInt32</Type>
+      </TypeList>
+    </XmlArchive>
+    <RecipeDefinition Name="PeersList" Id="{df1cdda0-d439-4d03-b57b-fc03f789eae3}">
+      <XmlArchive>
+        <Data>
+          <o xml:space="preserve" t="RecipeDefinitionObject">
+            <v n="UniqueIdGenerator">"9631"</v>
+            <o n="Recipes" t="RecipeList">
+              <l n="Recipes" t="ArrayList" cet="Recipe">
+                <o>
+                  <l n="Values" t="ArrayList" cet="RecipeValue">
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'No peer'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 1'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 2'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 3'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 4'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'No message'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 1 at transfer point'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 1 resuming operation'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 2 at transfer point'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 2 resuming operation'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 3 at transfer point'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 3 resuming operation'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 4 at transfer point'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 4 resuming operation'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 1 package delivered'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 2 package delivered'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 3 package delivered'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Conveyor 4 package delivered'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'No delivery status'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Delivery OK'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Delivery NOT OK: Rejected from receiver'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Delivery NOT OK: Receivers mailbox not empty'"</v>
+                    </o>
+                    <o>
+                      <v n="Type" t="TypeClass">String</v>
+                      <v n="Value">"'Delivery NOT OK: Peer not found'"</v>
+                    </o>
+                  </l>
+                  <v n="Name">"GTL"</v>
+                  <v n="Id">9586</v>
+                </o>
+              </l>
+            </o>
+            <o n="RecipeVariables" t="RecipeVariableList">
+              <l n="Variables" t="ArrayList" cet="RecipeVariable">
+                <o>
+                  <v n="VarName">"GTL.gtlPeers[1]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9581</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"STRING"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlPeers[2]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9582</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"STRING"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlPeers[3]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9583</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"STRING"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlPeers[4]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9584</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"STRING"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlPeers[5]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9617</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[1]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9589</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[2]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9590</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[3]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9591</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[4]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9592</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[5]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9593</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[6]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <n n="LowerBound" />
+                    <n n="UpperBound" />
+                  </o>
+                  <v n="Id">9594</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[7]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9595</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[8]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <n n="LowerBound" />
+                    <n n="UpperBound" />
+                  </o>
+                  <v n="Id">9596</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[9]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9618</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[10]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9625</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[11]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9627</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[12]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9629</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlMessages[13]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9631</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlDeliveryStatus[1]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9619</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlDeliveryStatus[2]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9620</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlDeliveryStatus[3]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9621</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlDeliveryStatus[4]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9622</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+                <o>
+                  <v n="VarName">"GTL.gtlDeliveryStatus[5]"</v>
+                  <v n="VarType" t="TypeClass">String</v>
+                  <v n="VarTypeAsString">"STRING"</v>
+                  <v n="Name">""</v>
+                  <o n="Boundaries" t="RecipeVariableBoundaries">
+                    <v n="Type" t="TypeClass">String</v>
+                    <v n="LowerBound">""</v>
+                    <v n="UpperBound">""</v>
+                  </o>
+                  <v n="Id">9623</v>
+                  <v n="Comment">""</v>
+                  <v n="VarUserDefTypeAsString">"Invalid Type"</v>
+                </o>
+              </l>
+            </o>
+            <o n="LMGuids" t="LanguageModelGuidHelper">
+              <d n="NamesAndGuids" t="Hashtable" ckt="String" cvt="Guid">
+                <v>VALUESINIT</v>
+                <v>0945206e-05d7-4480-a8d9-506b0c97af27</v>
+                <v>FILLDESCRIPTION</v>
+                <v>f1c65ccc-cded-4f17-b585-190ca2765eec</v>
+                <v>NAMESET</v>
+                <v>b399441e-1847-490b-ace1-8560466b78b3</v>
+                <v>PRVFILLDATASERVERSTRUCTURES</v>
+                <v>e6c67052-6e5b-46a6-a410-389436e05ef8</v>
+                <v>NAME</v>
+                <v>8cc5226d-d457-4747-a026-992eddf386e2</v>
+                <v>UPDATEFROMDESCRIPTION</v>
+                <v>1f6e3284-757a-47a6-82e3-5f2d0586b27c</v>
+                <v>WRITE</v>
+                <v>48bd382d-2971-4c53-b79a-75efde71a375</v>
+                <v>REC_DS_PRG__5DA2C92B91994C0BA5209DEBC10E6E6A</v>
+                <v>11235a06-4e7d-46ce-9688-b777e79ba966</v>
+                <v>READ</v>
+                <v>976ee3fb-0194-4101-938c-b3d839761063</v>
+              </d>
+            </o>
+          </o>
+        </Data>
+        <TypeList>
+          <Type n="ArrayList">System.Collections.ArrayList</Type>
+          <Type n="Guid">System.Guid</Type>
+          <Type n="Hashtable">System.Collections.Hashtable</Type>
+          <Type n="Int32">System.Int32</Type>
+          <Type n="LanguageModelGuidHelper">{3bce4913-f2c1-4b54-84e8-6d7ec1809176}</Type>
+          <Type n="Recipe">{53080c72-c79f-4271-9865-791f591dcef8}</Type>
+          <Type n="RecipeDefinitionObject">{6b3dfb6a-1865-4356-a39b-1fe0ef89651c}</Type>
+          <Type n="RecipeList">{361612e3-b6f9-4397-98a8-756875b9e479}</Type>
+          <Type n="RecipeValue">{57d4d5a5-2244-4adb-b7c3-3e65da497dcc}</Type>
+          <Type n="RecipeVariable">{53eb36d9-3360-453b-901e-ca88bd8f0cba}</Type>
+          <Type n="RecipeVariableBoundaries">{27f9af88-23e7-4a13-82aa-c97c4e06a71a}</Type>
+          <Type n="RecipeVariableList">{97841042-ff4f-47b5-923e-538f1387df5a}</Type>
+          <Type n="String">System.String</Type>
+          <Type n="TypeClass">{16f7aa24-038f-444e-9d81-b001bc091d35}</Type>
+        </TypeList>
+      </XmlArchive>
+    </RecipeDefinition>
+  </RecipeManager>
+</TcPlcObject>

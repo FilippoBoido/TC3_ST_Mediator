@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
   <DUT Name="ST_Message" Id="{737f09da-c091-4996-91d5-0f9187b0bd5f}">
     <Declaration><![CDATA[{attribute 'enable_dynamic_creation'}
 TYPE ST_Message :
 STRUCT
 	eMessage : E_MessageList;
-	ePeer : E_PeersList;
+	eFromPeer : E_PeersList;
+	eToPeer : E_PeersList;
 	eDeliveryStatus : E_DeliveryStatus;
 END_STRUCT
 END_TYPE

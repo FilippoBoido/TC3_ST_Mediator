@@ -1,16 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
-  <DUT Name="E_PeersList" Id="{ef6f9c70-ce8b-4ac0-ac39-7e011921abc8}">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <DUT Name="E_PeersList" Id="{cb7d8015-fea6-4975-962a-104a3fdd4ae4}">
     <Declaration><![CDATA[//{attribute 'qualified_only'}
 //{attribute 'strict'}
 TYPE E_PeersList :
 (
-	ePEER_NO_PEER := 0,
-	ePEER_DEBUG_1,
-	ePEER_DEBUG_2,
-	ePEER_SCHNEIDEN,
-	ePEER_UMLENKUNG,
-	ePEER_BEREITSTELLUNG,
+	ePEER_NO_PEER := 1,
 	ePEER_CONVEYOR_1,
 	ePEER_CONVEYOR_2,
 	ePEER_CONVEYOR_3,

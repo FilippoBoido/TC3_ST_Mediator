@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_Sensor" Id="{5cdbb8eb-2ee3-4428-8e06-45109b7bda85}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Sensor
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	{attribute 'OPC.UA.DA' := '1'}
+	bSignal  AT%I* : BOOL;	
+	fbRTrig : R_TRIG;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbRTrig(CLK:= bSignal, Q=> );]]></ST>
+    </Implementation>
+    <Property Name="GetSignal" Id="{b1873d3f-9164-488f-a0ca-83841b40c1e0}">
+      <Declaration><![CDATA[PROPERTY GetSignal : BOOL]]></Declaration>
+      <Get Name="Get" Id="{f31317ee-353f-4159-90ff-cf9d4b984dfb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetSignal := bSignal;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetTriggerSignal" Id="{f294154d-0c89-4c51-814e-1bd507069e62}">
+      <Declaration><![CDATA[PROPERTY GetTriggerSignal : BOOL]]></Declaration>
+      <Get Name="Get" Id="{515ec873-3043-4302-b5da-677f55fd22ae}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetTriggerSignal := fbRTrig.Q;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_Sensor">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sensor.GetSignal.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sensor.GetTriggerSignal.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
