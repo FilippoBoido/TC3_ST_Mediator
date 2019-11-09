@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_Conveyor" Id="{69450c1a-ee4c-47aa-99f8-d851169b590d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Conveyor EXTENDS FB_Peer
+VAR_INPUT
+	in_bStart : BOOL;
+END_VAR
+VAR_OUTPUT
+	out_fbSensorStop : FB_Sensor;
+	out_fbSensorMaterialDispatch : FB_Sensor;
+END_VAR
+VAR	
+	{attribute 'OPC.UA.DA' := '1'}
+	bStartMotor AT%Q* : BOOL;
+	iSequence : I_ConveyorSequence;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF in_bStart THEN
+	M_RunSequence();
+END_IF]]></ST>
+    </Implementation>
+    <Method Name="M_RegisterSequence" Id="{1da2d62e-6caa-40e2-94d1-af7e92fd682d}">
+      <Declaration><![CDATA[METHOD M_RegisterSequence : BOOL
+VAR_INPUT
+	in_iSequence : I_ConveyorSequence;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[iSequence := in_iSequence;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RunSequence" Id="{338a3dfd-c235-4a82-9dba-a5051aee481c}">
+      <Declaration><![CDATA[METHOD M_RunSequence : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF iSequence = NULL THEN
+	RETURN;
+END_IF
+
+iSequence.M_ConveyorSequence(this^);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_StartConveyor" Id="{63eaa96e-8dac-4661-a1f7-5f07796fa619}">
+      <Declaration><![CDATA[METHOD M_StartConveyor : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bStartMotor := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_StopConveyor" Id="{a0f92c9a-6afa-476a-ab86-88f9d155234b}">
+      <Declaration><![CDATA[METHOD M_StopConveyor : E_PeerReturnCode
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bStartMotor := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Conveyor">
+      <LineId Id="9" Count="0" />
+      <LineId Id="13" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_Conveyor.M_RegisterSequence">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Conveyor.M_RunSequence">
+      <LineId Id="5" Count="2" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Conveyor.M_StartConveyor">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Conveyor.M_StopConveyor">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

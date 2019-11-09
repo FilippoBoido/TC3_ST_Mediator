@@ -4,6 +4,21 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	fbMediator : FB_Mediator;
+	aMediatorInitReturnCodes : ARRAY[1..GVL_Constants.nACTUAL_NUM_PEERS] OF E_MediatorReturnCode;
+	
+	aConveyorPeers : ARRAY[1..GVL_Constants.nACTUAL_NUM_PEERS] OF FB_Conveyor;
+	
+	rConveyor1 : REFERENCE TO FB_Conveyor;
+	rConveyor2 : REFERENCE TO FB_Conveyor;
+	rConveyor3 : REFERENCE TO FB_Conveyor;
+	rConveyor4 : REFERENCE TO FB_Conveyor;
+	
+	fbConveyorPeerSequence : FB_ConveyorPeerSequence;
+	{attribute 'OPC.UA.DA' := '1'}
+	bInit : BOOL;
+	nMainI : UINT;
+	
+	(*
 	//fbCutPeer : FB_Peer(E_PeersList.ePEER_SCHNEIDEN);
 	fbDebugPeer1 : FB_Peer(E_PeersList.ePEER_DEBUG_1);
 	fbDebugPeer2 : FB_Peer(E_PeersList.ePEER_DEBUG_2);
@@ -12,11 +27,12 @@ VAR
 	
 	bPeer1SendMessage : BOOL;
 	bPeer2SendMessage : BOOL;
-
+ 	*)
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[IF eMediatorReturnCode = NULL THEN
+      <ST><![CDATA[(*
+IF eMediatorReturnCode = NULL THEN
 	eMediatorReturnCode := fbMediator.M_AddPeer(fbDebugPeer1);
 	fbMediator.M_AddPeer(fbDebugPeer2);
 END_IF 
@@ -26,7 +42,7 @@ fbMediator();
 IF bPeer1SendMessage THEN
 	
 	fbDebugPeer1.M_SendMessage(
-		in_stMessage := NewMessage(eDEBUG_MESSAGE,ePEER_DEBUG_2)	
+		in_stMessage := Message(eDEBUG_MESSAGE,ePEER_DEBUG_2)	
 	);
 	
 	bPeer1SendMessage := FALSE;
@@ -34,35 +50,57 @@ IF bPeer1SendMessage THEN
 ELSIF bPeer2SendMessage THEN
 	
 	fbDebugPeer2.M_SendMessage(
-		in_stMessage := NewMessage(eDEBUG_MESSAGE,ePEER_DEBUG_1)		
+		in_stMessage := Message(eDEBUG_MESSAGE,ePEER_DEBUG_1)		
 	);
 	
 	bPeer2SendMessage := FALSE;
 	
+END_IF
+*)
+
+IF NOT bInit THEN
+	
+	bInit := TRUE;
+	
+	rConveyor1 REF= aConveyorPeers[1];
+	rConveyor2 REF= aConveyorPeers[2];
+	rConveyor3 REF= aConveyorPeers[3];
+	rConveyor4 REF= aConveyorPeers[4];
+	
+	rConveyor1.eSetPeerId := E_PeersList.ePEER_CONVEYOR_1;
+	rConveyor2.eSetPeerId := E_PeersList.ePEER_CONVEYOR_2;
+	rConveyor3.eSetPeerId := E_PeersList.ePEER_CONVEYOR_3; 
+	rConveyor4.eSetPeerId := E_PeersList.ePEER_CONVEYOR_4; 
+	
+	FOR nMainI := 1 TO GVL_Constants.nACTUAL_NUM_PEERS DO 
+		aMediatorInitReturnCodes[nMainI] := fbMediator.M_AddPeer(aConveyorPeers[nMainI]);
+		aConveyorPeers[nMainI].M_RegisterSequence(fbConveyorPeerSequence);
+		aConveyorPeers[nMainI].in_bStart := TRUE;
+	END_FOR	
+	
 END_IF]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="31" Count="0" />
-      <LineId Id="33" Count="1" />
-      <LineId Id="32" Count="0" />
-      <LineId Id="36" Count="0" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="2" Count="0" />
-      <LineId Id="20" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="51" Count="0" />
-      <LineId Id="53" Count="1" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="61" Count="0" />
-      <LineId Id="65" Count="0" />
-      <LineId Id="56" Count="0" />
-      <LineId Id="66" Count="0" />
-      <LineId Id="59" Count="1" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="62" Count="0" />
-      <LineId Id="68" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="82" Count="22" />
       <LineId Id="52" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="144" Count="2" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="149" Count="3" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="157" Count="1" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="127" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

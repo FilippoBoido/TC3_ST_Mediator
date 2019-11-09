@@ -4,9 +4,10 @@
     <Declaration><![CDATA[TYPE ST_PeerAccount :
 STRUCT
 	iPeer : I_Peer;
-	fbMessagesList : FB_LinkedListCtrl;
-	nodes : ARRAY[1..nMAX_DATA_ELEMENTS] OF T_LinkedListEntry;
-	hList : T_HLINKEDLIST; //linked list handle
+	//fbMessagesList : FB_LinkedListCtrl;
+	//nodes : ARRAY[1..nMAX_DATA_ELEMENTS] OF T_LinkedListEntry;
+	//hList : T_HLINKEDLIST; //linked list handle
+	aMessages : ARRAY[1..nMAX_DATA_ELEMENTS] OF ST_Message;
 	nStackPointer : UINT := 1;
 	rMailbox : REFERENCE TO ST_MAILBOX; 
 	bMailboxFull : BOOL;

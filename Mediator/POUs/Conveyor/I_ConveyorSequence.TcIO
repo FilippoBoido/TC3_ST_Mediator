@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <Itf Name="I_ConveyorSequence" Id="{0b7895fc-0c42-49e7-9335-476be65f06eb}">
+    <Declaration><![CDATA[INTERFACE I_ConveyorSequence EXTENDS I_Sequence
+]]></Declaration>
+    <Method Name="M_ConveyorSequence" Id="{b5d018b8-783d-419c-9813-993f2c9a5784}">
+      <Declaration><![CDATA[METHOD M_ConveyorSequence : BOOL
+VAR_INPUT
+	in_rConveyor : REFERENCE TO FB_Conveyor;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

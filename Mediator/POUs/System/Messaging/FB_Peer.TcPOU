@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_Peer" Id="{649f05f2-f8f7-4321-84e7-57ddb4422002}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Peer (*EXTENDS FB_ComponentBase*) IMPLEMENTS I_Peer
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	ePeer : E_PeersList;
+	stMailbox : ST_Mailbox; 
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="eSetPeerId" Id="{41b5b2fc-a03d-4a36-a554-b02e7f9b0db9}">
+      <Declaration><![CDATA[PROPERTY eSetPeerId : E_PeersList]]></Declaration>
+      <Set Name="Set" Id="{4c32e556-d653-41d4-9954-77a9f537d7d4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ePeer := eSetPeerId;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="M_CompareMessage" Id="{9acb8617-8d40-4e7e-9da3-0d06c79d32f3}">
+      <Declaration><![CDATA[METHOD M_CompareMessage : E_PeerReturnCode
+VAR_INPUT
+	in_stMessage : ST_Message;
+END_VAR
+VAR
+	stIncomingMessage : ST_MESSAGE;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF M_IsNewMessageAvailable() THEN
+	
+	stIncomingMessage := M_GetNextMessage();
+	IF 	stIncomingMessage.eMessage = in_stMessage.eMessage
+		AND stIncomingMessage.ePeer = in_stMessage.ePeer
+		THEN
+		
+		M_CompareMessage := E_PeerReturnCode.eMATCH_FOUND;
+		
+	ELSE
+		
+		M_CompareMessage := E_PeerReturnCode.eNO_MATCH_FOUND;
+	
+	END_IF
+	
+ELSE
+
+	M_CompareMessage := E_PeerReturnCode.eNO_NEW_MESSAGE;	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_CompareMessageAndEmptyMailbox" Id="{d50a66b7-9de1-48fd-9e2f-1b5b2de39108}">
+      <Declaration><![CDATA[METHOD M_CompareMessageAndEmptyMailbox : E_PeerReturnCode
+VAR_INPUT
+	in_stMessage : ST_Message;
+END_VAR
+VAR
+	stMessage : ST_Message;
+	eTmpEval : E_PeerReturnCode;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_CompareMessageAndEmptyMailbox := M_CompareMessage(in_stMessage);
+
+IF M_CompareMessageAndEmptyMailbox = E_PeerReturnCode.eNO_MATCH_FOUND THEN
+	stMessage := M_GetNextMessage();
+	stMessage.eDeliveryStatus := E_DeliveryStatus.eDELIVERY_REJECTED;
+	eTmpEval := M_SendMessage(stMessage);
+END_IF
+
+IF eTmpEval = E_PeerReturnCode.eMESSAGE_IN_OUTBOX
+	OR M_CompareMessageAndEmptyMailbox = E_PeerReturnCode.eMATCH_FOUND
+	THEN
+	
+	M_EmptyMailbox();
+	
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_EmptyMailbox" Id="{1c6fa322-ecc4-4159-893f-c6de54065be6}">
+      <Declaration><![CDATA[METHOD M_EmptyMailbox : E_PeerReturnCode
+VAR_INPUT
+END_VAR
+VAR
+	stEmptyMessage : ST_MESSAGE;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF M_IsNewMessageAvailable() THEN
+	stMailbox.stInbox := stEmptyMessage;
+	stMailbox.bNewMessageAvail := FALSE;
+	M_EmptyMailbox := E_PeerReturnCode.eMAILBOX_EMPTIED;
+ELSE
+	M_EmptyMailbox := E_PeerReturnCode.eMAILBOX_EMPTY;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetNextMessage" Id="{83928553-9561-4ffa-9203-9059398e325b}">
+      <Declaration><![CDATA[METHOD M_GetNextMessage : ST_Message
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF M_IsNewMessageAvailable() THEN
+	M_GetNextMessage := stMailbox.stInbox;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetPeerId" Id="{a6b6b1ad-0a9b-4a1b-8a9b-b2bdb48762e5}">
+      <Declaration><![CDATA[METHOD M_GetPeerId : E_PeersList
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_GetPeerId := ePeer;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_IsNewMessageAvailable" Id="{83d764a1-c7d8-4eeb-a4b4-2c8f522c9d72}">
+      <Declaration><![CDATA[METHOD M_IsNewMessageAvailable : BOOL
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_IsNewMessageAvailable := stMailbox.bNewMessageAvail;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RetrieveMailbox" Id="{3aa7f8d2-d58a-46de-8339-a24562604a5d}">
+      <Declaration><![CDATA[METHOD M_RetrieveMailbox : REFERENCE TO ST_MAILBOX
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_RetrieveMailbox Ref= stMailbox;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_SendMessage" Id="{36db4a39-18fa-4cfd-b577-bb1450175a0f}">
+      <Declaration><![CDATA[METHOD M_SendMessage : E_PeerReturnCode
+VAR_INPUT
+	in_stMessage : ST_Message;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT stMailbox.bSendingMessage THEN
+	stMailbox.stOutbox := in_stMessage;
+	stMailbox.bSendingMessage := TRUE;
+	M_SendMessage := E_PeerReturnCode.eMESSAGE_IN_OUTBOX;
+ELSE
+	M_SendMessage := E_PeerReturnCode.eMAILBOX_BUSY;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Peer">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.eSetPeerId.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_CompareMessage">
+      <LineId Id="5" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="14" Count="2" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_CompareMessageAndEmptyMailbox">
+      <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_EmptyMailbox">
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_GetNextMessage">
+      <LineId Id="7" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_GetPeerId">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_IsNewMessageAvailable">
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_RetrieveMailbox">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Peer.M_SendMessage">
+      <LineId Id="19" Count="1" />
+      <LineId Id="22" Count="3" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

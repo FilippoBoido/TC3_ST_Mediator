@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="E_ConveyorPeerSequence" Id="{59cee76a-a01b-4a73-9dda-f339ecb96e72}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_ConveyorPeerSequence :
+(
+	eSTOP := 0,
+	eSTART,
+	eHOME,
+	eWAIT_FOR_ACK,
+	eSTOP_AT_SIGNAL,
+	eRESUME_OPERATION,
+	eEND_SEQUENCE
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

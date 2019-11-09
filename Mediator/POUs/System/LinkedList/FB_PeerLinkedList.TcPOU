@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_PeerLinkedList" Id="{0929a248-657a-448c-9f2b-b51e90583290}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_PeerLinkedList EXTENDS FB_GenericLinkedList
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="M_AddPeerToHead" Id="{464f18b8-6c04-40f4-b288-175de2d0862d}">
+      <Declaration><![CDATA[METHOD M_AddPeerToHead : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+	pPeerToAdd : POINTER TO ST_PeerAccount;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnitToAdd^.pVoid := pPeerToAdd;
+SUPER^.M_AddToHead(pUnitToAdd);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_AddPeerToTail" Id="{3b77f470-7022-4971-b4ab-b206c5e3425d}">
+      <Declaration><![CDATA[METHOD M_AddPeerToTail : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+	pPeerToAdd : POINTER TO ST_PeerAccount;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnitToAdd^.pVoid := pPeerToAdd;
+SUPER^.M_AddToTail(pUnitToAdd);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetHeadPeer" Id="{d853f2c3-86cc-49ee-8bf7-ff0d989c9260}">
+      <Declaration><![CDATA[METHOD M_GetHeadPeer : POINTER TO ST_PeerAccount
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetHead();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetHeadPeer := stUnit^.pVoid;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetNextPeer" Id="{636eccf5-2527-4f0a-8ddc-080149e32a15}">
+      <Declaration><![CDATA[METHOD M_GetNextPeer : POINTER TO ST_PeerAccount
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetNext();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetNextPeer := stUnit^.pVoid;
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetTailPeer" Id="{032d1d0b-1a07-4543-8e00-a69399b55fa1}">
+      <Declaration><![CDATA[METHOD M_GetTailPeer : POINTER TO ST_PeerAccount
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetTail();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetTailPeer := stUnit^.pVoid;
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_PeerLinkedList">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PeerLinkedList.M_AddPeerToHead">
+      <LineId Id="11" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PeerLinkedList.M_AddPeerToTail">
+      <LineId Id="11" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PeerLinkedList.M_GetHeadPeer">
+      <LineId Id="10" Count="0" />
+      <LineId Id="15" Count="3" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PeerLinkedList.M_GetNextPeer">
+      <LineId Id="5" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="15" Count="2" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PeerLinkedList.M_GetTailPeer">
+      <LineId Id="6" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="14" Count="2" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

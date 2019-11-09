@@ -1,0 +1,562 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_Mediator" Id="{c5574a95-b005-4b8b-ba18-453adb328f12}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Mediator
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+
+END_VAR
+VAR
+	aPeersConnected : ARRAY[1..nMAX_PEER_NUMBER] OF ST_PeerAccount;
+	aListUnits : ARRAY[1..nMAX_PEER_NUMBER] OF ST_LinkedListUnit;
+	
+	fbPeersList : FB_PeerLinkedList;
+	
+	nStackPointer : UINT := 1;
+	bAtLeastOnePeerConnected : BOOL;
+	
+	stTestUnit : ST_LinkedListUnit;
+	pTestMessage : POINTER TO ST_Message;
+	stEmptyMessage : ST_MESSAGE;
+	
+	
+	//DEBUG:
+	//If one of the following variables becomes TRUE, investigation of the cause is mandatory
+//--------------------------------------------------------------------------------------------
+	bFailedToRelocateToTail : BOOL;
+	bNullExceptionWhileDispatching : BOOL;
+	bNullExceptionWhileCheckingMailbox : BOOL;
+//--------------------------------------------------------------------------------------------
+
+
+END_VAR
+VAR CONSTANT
+	nMAX_PEER_NUMBER : UINT := 100;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbPeersList.M_InitLinkedList(aListUnits);
+
+M_CheckMailboxes();
+M_DispatchMessages();]]></ST>
+    </Implementation>
+    <Method Name="M_AddPeer" Id="{694e1e7b-7df5-4562-92ab-e389ee720bcc}">
+      <Declaration><![CDATA[METHOD PUBLIC M_AddPeer : E_MediatorReturnCode
+VAR_INPUT
+	in_iPeer : I_Peer;
+END_VAR
+VAR
+	i : UINT;
+	
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT fbPeersList.bInit THEN
+	RETURN;
+END_IF
+
+IF nStackPointer > nMAX_PEER_NUMBER THEN
+	M_AddPeer := E_MediatorReturnCode.eMAX_NUMBER_OF_CONNECTED_PEERS;
+	RETURN;
+END_IF
+
+FOR i := 1 TO nMAX_PEER_NUMBER DO
+	IF aPeersConnected[i].iPeer = in_iPeer THEN
+		M_AddPeer := E_MediatorReturnCode.ePEER_ALREADY_CONNECTED;
+		RETURN;	
+	END_IF
+END_FOR
+
+aPeersConnected[nStackPointer].iPeer := in_iPeer;
+aPeersConnected[nStackPointer].rMailbox Ref= in_iPeer.M_RetrieveMailbox();
+
+fbPeersList.M_AddPeerToTail
+(
+	pPeerToAdd := ADR(aPeersConnected[nStackPointer]),
+	pUnitToAdd := ADR(aListUnits[nStackPointer])
+);
+
+nStackPointer := nStackPointer + 1;
+
+bAtLeastOnePeerConnected := TRUE;
+
+M_AddPeer := E_MediatorReturnCode.ePEER_CONNECTED;
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_CheckMailboxes" Id="{cd0b5dd7-0ae3-4858-8ff7-ce85195c1ca9}">
+      <Declaration><![CDATA[METHOD PRIVATE M_CheckMailboxes : BOOL
+
+VAR
+	nSendersAccount : UINT;
+	nSendersStackPointer : UINT;
+	stMessageToAdd : ST_Message;
+	pPeer : POINTER TO ST_PeerAccount;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bAtLeastOnePeerConnected THEN
+	RETURN;
+END_IF 
+
+FOR nSendersAccount := 1 TO nStackPointer-1 DO
+	
+	pPeer :=  fbPeersList.M_GetNextPeer();
+	
+	IF pPeer = NULL THEN
+		//Report null exception
+		bNullExceptionWhileCheckingMailbox := TRUE;
+		CONTINUE;
+	END_IF
+	
+	IF pPeer^.rMailbox.bMessageSent THEN
+		pPeer^.rMailbox.bMessageSent := FALSE;
+	END_IF;
+	
+	//If sender has a Message in its outbox, add the message to the list of messages
+	//The oldest message always in front of the list (FIFO)
+	IF pPeer^.rMailbox.bSendingMessage THEN
+		
+		nSendersStackPointer := pPeer^.nStackPointer;
+		// If the senders account has less then X messages, add the outgoing message to the message list 
+		IF nSendersStackPointer <= nMAX_DATA_ELEMENTS THEN
+	
+			stMessageToAdd := pPeer^.rMailbox.stOutbox;
+			
+			pPeer^.bMailboxFull := FALSE;
+			pPeer^.aMessages[nSendersStackPointer] := stMessageToAdd;		
+			pPeer^.nStackPointer := nSendersStackPointer + 1;		
+			pPeer^.bMailboxEmpty := FALSE;		
+			pPeer^.rMailbox.bSendingMessage := FALSE;
+			pPeer^.rMailbox.stOutbox := stEmptyMessage;
+	
+			//Will be true for only one cycle
+			pPeer^.rMailbox.bMessageSent := TRUE;
+			
+		ELSE
+			
+			//Mailbox contains more than X messages
+			pPeer^.bMailboxFull := TRUE;
+			
+		END_IF
+		
+	END_IF
+	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_DeleteMessageFromSendersAccount" Id="{9f20e6c9-acb9-4365-ba5d-c0831e56f4b4}">
+      <Declaration><![CDATA[METHOD PRIVATE M_DeleteMessageFromSendersAccount : BOOL
+VAR_INPUT
+	in_pSenderPeer : POINTER TO ST_PeerAccount;
+END_VAR
+VAR
+	stEmptyMessage : ST_MESSAGE;
+	nSendersStackPointer : UINT;
+	i : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF in_pSenderPeer^.bMailboxEmpty THEN
+	RETURN;
+END_IF 
+
+nSendersStackPointer := in_pSenderPeer^.nStackPointer;
+in_pSenderPeer^.nStackPointer := nSendersStackPointer - 1;
+
+//Only one message was in the list
+IF in_pSenderPeer^.nStackPointer = 1 THEN
+	
+	//Remove oldest message from list
+	in_pSenderPeer^.aMessages[1] := stEmptyMessage;
+	in_pSenderPeer^.bMailboxEmpty := TRUE;
+ELSE
+	//Move all the messages by one 
+	FOR i := 2 TO nSendersStackPointer-1 DO 
+		in_pSenderPeer^.aMessages[i - 1] := 
+			in_pSenderPeer^.aMessages[i];
+	END_FOR
+	
+	//Remove newest message from list
+	in_pSenderPeer^.aMessages[nSendersStackPointer-1] := stEmptyMessage;
+	
+END_IF	
+
+
+
+
+
+
+
+		
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_DispatchMessages" Id="{8caccc8f-9c76-40c6-b08f-e8828ce973c6}">
+      <Declaration><![CDATA[METHOD PRIVATE M_DispatchMessages 
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	
+END_VAR
+VAR
+	nSenderPeer : UINT;
+	nReceiverPeer : UINT;
+	
+	pPeer : POINTER TO ST_PeerAccount;
+	pUnit : POINTER TO ST_LinkedListUnit;
+	
+	nPeerListPosition : UINT;
+END_VAR
+
+VAR_INST
+
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	NOT bAtLeastOnePeerConnected 
+	OR fbPeersList.M_GetCurrentPosition() = 0
+	THEN
+	
+	RETURN;
+END_IF 
+
+FOR nSenderPeer := 1 TO nStackPointer-1 DO
+	
+	pPeer :=  fbPeersList.M_GetNextPeer();
+	
+	IF pPeer = NULL THEN
+		//Report null exception
+		bNullExceptionWhileDispatching := TRUE;
+		CONTINUE;
+	END_IF
+	
+	//Check if peer has mail to send
+	IF NOT pPeer^.bMailboxEmpty THEN
+		
+		//Result 0 means peer not found
+		nReceiverPeer := M_FindPeer( M_GetReceiverPeerId( pPeer ) );
+		
+		IF nReceiverPeer > 0 THEN
+			
+			//Sends the message only when the receiver has emptied its own mailbox
+			IF 	NOT aPeersConnected[nReceiverPeer].rMailbox.bNewMessageAvail
+				THEN				
+				
+				M_SendMessage
+				(
+					in_nReceiverPeer := nReceiverPeer,
+					in_pSenderPeer := pPeer 
+				);
+				
+				M_DeleteMessageFromSendersAccount(in_pSenderPeer := pPeer);	
+							
+				pPeer^.eDispatchRoutineReturnCode := eMESSAGE_DISPATCHED;
+				
+				bFailedToRelocateToTail S= NOT fbPeersList.M_RelocateToTail();
+
+
+			ELSE
+				
+				pPeer^.eDispatchRoutineReturnCode := eMESSAGE_NOT_DISPATCHED;
+					
+			END_IF
+			
+		ELSE
+			// Report peer not found;	
+			M_DeleteMessageFromSendersAccount(in_pSenderPeer := pPeer);	
+			pPeer^.eDispatchRoutineReturnCode := ePEER_NOT_FOUND;
+			
+		END_IF
+				
+	END_IF
+	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_FindPeer" Id="{878caac1-d47b-4a31-9e53-2db987497e7a}">
+      <Declaration><![CDATA[METHOD PRIVATE M_FindPeer : UINT
+VAR_INPUT
+	in_ePeer : E_PeersList;
+END_VAR
+VAR
+	i : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	NOT bAtLeastOnePeerConnected 
+	OR in_ePeer = NULL 
+	THEN
+	
+	RETURN;
+	
+END_IF 
+
+//Check if receiver peer is in the peers list and return position of peer in the list
+FOR i := 1 TO nStackPointer - 1 DO
+	
+	IF aPeersConnected[i].iPeer.M_GetPeerId() = in_ePeer THEN
+		
+		M_FindPeer := i;
+		RETURN;
+		
+	END_IF
+	
+END_FOR
+
+M_FindPeer := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetReceiverPeerId" Id="{22257351-27a0-43bb-96ee-bf162d2f9dfc}">
+      <Declaration><![CDATA[METHOD PRIVATE M_GetReceiverPeerId : E_PeersList
+VAR_INPUT
+	in_pSenderPeer : POINTER TO ST_PeerAccount;
+END_VAR
+VAR
+	pMessage : POINTER TO ST_Message;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Extract receivers Id from the oldest message in the list
+M_GetReceiverPeerId := in_pSenderPeer^.aMessages[1].ePeer;
+							
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_IsPeerConnected" Id="{9f12470a-c2b8-4395-87f5-2eeef52e26d8}">
+      <Declaration><![CDATA[METHOD PUBLIC M_IsPeerConnected : BOOL
+VAR_INPUT
+	in_ePeer : E_PeersList;
+END_VAR
+VAR
+	i : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i := 1 TO nMAX_PEER_NUMBER DO
+	
+	IF aPeersConnected[i].iPeer.M_GetPeerId() = in_ePeer THEN
+		
+		M_IsPeerConnected := TRUE;
+		RETURN;
+		
+	END_IF
+	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_SendMessage" Id="{99be8876-3430-43f6-82fc-8cdde1ca3f33}">
+      <Declaration><![CDATA[METHOD PRIVATE M_SendMessage : BOOL
+VAR_INPUT
+	in_nReceiverPeer : UINT;
+	in_pSenderPeer : POINTER TO ST_PeerAccount;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Dispatch mail after the FIFO principle
+aPeersConnected[in_nReceiverPeer].rMailbox.stInbox := in_pSenderPeer^.aMessages[1];
+aPeersConnected[in_nReceiverPeer].rMailbox.bNewMessageAvail := TRUE;		
+
+
+
+		
+
+
+	
+
+				
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Mediator">
+      <LineId Id="32" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_AddPeer">
+      <LineId Id="60" Count="2" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="54" Count="4" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_CheckMailboxes">
+      <LineId Id="10" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="135" Count="1" />
+      <LineId Id="141" Count="1" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="137" Count="2" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="133" Count="1" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="106" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="117" Count="1" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_DeleteMessageFromSendersAccount">
+      <LineId Id="82" Count="1" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="108" Count="1" />
+      <LineId Id="96" Count="1" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="104" Count="2" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="91" Count="1" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_DispatchMessages">
+      <LineId Id="48" Count="0" />
+      <LineId Id="153" Count="2" />
+      <LineId Id="49" Count="4" />
+      <LineId Id="121" Count="3" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="54" Count="5" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="62" Count="1" />
+      <LineId Id="65" Count="1" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="77" Count="1" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="69" Count="3" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="73" Count="3" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_FindPeer">
+      <LineId Id="23" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_GetReceiverPeerId">
+      <LineId Id="7" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_IsPeerConnected">
+      <LineId Id="7" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mediator.M_SendMessage">
+      <LineId Id="47" Count="1" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="37" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

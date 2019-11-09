@@ -1,0 +1,486 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_GenericLinkedList" Id="{366e2f0e-7afe-4f4c-97fe-7cd755399221}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_GenericLinkedList
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	bInit : BOOL;
+END_VAR
+VAR
+	
+	pHead : POINTER TO ST_LinkedListUnit;
+	pTail : POINTER TO ST_LinkedListUnit;
+	pPointer : POINTER TO ST_LinkedListUnit; //Helper
+	pGetNext : POINTER TO ST_LinkedListUnit;
+	nGetNextPosition : UINT := 1;
+	nSizeOfLinkedList : DINT;
+	
+	bIsEmpty : BOOL := TRUE;
+	bIsFull : BOOL;
+	nUnitsInTheList : DINT;
+	
+		//DEBUG:
+	//If one of the following variables becomes TRUE, investigation of the cause is mandatory
+//--------------------------------------------------------------------------------------------
+	bTriedToRelocatePositionZero : BOOL;
+//--------------------------------------------------------------------------------------------
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="M_AddToHead" Id="{effdf2ca-9db7-44c2-bac2-468f11eabb39}">
+      <Declaration><![CDATA[METHOD M_AddToHead : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsFull THEN
+	RETURN;
+END_IF
+
+IF bIsEmpty THEN
+	pHead := pUnitToAdd;
+	pTail := pHead;
+	pPointer := pHead;
+ELSE
+	pHead^.pPrevious := pUnitToAdd;
+	pUnitToAdd^.pNext := pHead;
+	pUnitToAdd^.pPrevious := NULL;
+	pHead := pUnitToAdd;	
+END_IF
+
+nUnitsInTheList := nUnitsInTheList + 1;
+
+IF nUnitsInTheList = nSizeOfLinkedList THEN
+	bIsFull := TRUE;
+ELSIF nUnitsInTheList >= 1 THEN
+	bIsEmpty := FALSE;
+END_IF
+	
+M_AddToHead := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_AddToTail" Id="{07db24fe-d9ac-4de5-88fc-850ffc004359}">
+      <Declaration><![CDATA[METHOD M_AddToTail : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsFull THEN
+	RETURN;
+END_IF
+
+IF bIsEmpty THEN
+	pHead := pUnitToAdd;
+	pTail := pHead;
+	pPointer := pHead;
+ELSE
+	pTail^.pNext := pUnitToAdd;
+	pUnitToAdd^.pPrevious := pTail;
+	pUnitToAdd^.pNext := NULL;
+	pTail := pUnitToAdd;	
+END_IF
+
+nUnitsInTheList := nUnitsInTheList + 1;
+
+IF nUnitsInTheList = nSizeOfLinkedList THEN
+	bIsFull := TRUE;
+ELSIF nUnitsInTheList >= 1 THEN
+	bIsEmpty := FALSE;
+END_IF
+	
+M_AddToTail := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_FindUnit" Id="{60e53482-97a0-40ba-bf35-1a1512886224}">
+      <Declaration><![CDATA[METHOD M_FindUnit : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetCurrent" Id="{27c6129a-a04d-4e80-a1b9-970c50c52625}">
+      <Declaration><![CDATA[METHOD M_GetCurrent : POINTER TO ST_LinkedListUnit
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsEmpty THEN
+	RETURN;
+END_IF
+
+M_GetCurrent := pGetNext;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetCurrentPosition" Id="{05b57a4b-a7d5-456f-8d63-a682ad4188ed}">
+      <Declaration><![CDATA[METHOD M_GetCurrentPosition : UINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_GetCurrentPosition := nGetNextPosition-1;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetHead" Id="{3edf442d-b82c-4445-b424-6c63e68bf295}">
+      <Declaration><![CDATA[METHOD M_GetHead : POINTER TO ST_LinkedListUnit
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsEmpty THEN
+	RETURN;
+END_IF
+
+M_GetHead := pHead;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetNext" Id="{a655ed2a-5eac-4ac6-94e0-a8b218a9e90f}">
+      <Declaration><![CDATA[METHOD M_GetNext : POINTER TO ST_LinkedListUnit
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsEmpty THEN
+	RETURN;
+END_IF
+
+IF 	nGetNextPosition = 1 
+	OR pGetNext = pTail THEN
+	
+	IF pGetNext = pTail THEN
+		nGetNextPosition := 1;
+	END_IF
+	
+	pGetNext := pHead;
+	
+ELSE
+	pGetNext := pGetNext^.pNext;
+END_IF
+
+nGetNextPosition := nGetNextPosition + 1;
+M_GetNext := pGetNext;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetTail" Id="{271d1afe-0efd-48a7-8c68-6f953c85f059}">
+      <Declaration><![CDATA[METHOD M_GetTail : POINTER TO ST_LinkedListUnit
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsEmpty THEN
+	RETURN;
+END_IF
+
+M_GetTail := pTail;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_InitLinkedList" Id="{113ef8cc-345a-433f-aa32-465314df399e}">
+      <Declaration><![CDATA[METHOD M_InitLinkedList : BOOL
+VAR_IN_OUT
+    aLinkedListMemory : ARRAY [*] OF ST_LinkedListUnit;
+END_VAR
+VAR
+	i : DINT;
+	nLowerBound : DINT;
+	nUpperBound : DINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bInit THEN
+	RETURN;
+END_IF
+
+nLowerBound := LOWER_BOUND(aLinkedListMemory,1);
+nUpperBound := UPPER_BOUND(aLinkedListMemory,1);
+
+nSizeOfLinkedList := nUpperBound - nLowerBound;
+
+//pHead := ADR(aLinkedListMemory[nLowerBound]);
+//pTail := pHead;
+//pPointer := pHead;
+
+pGetNext := pHead;
+bIsEmpty := TRUE;
+bInit := TRUE;
+M_InitLinkedList := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RelocateToHead" Id="{cf6e92ba-f408-4dd7-9d8e-a16459af382f}">
+      <Declaration><![CDATA[METHOD M_RelocateToHead : BOOL
+VAR
+	pUnit : POINTER TO ST_LinkedListUnit;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnit := M_RemoveAtLocation(M_GetCurrentPosition());
+
+IF pUnit = NULL THEN
+	RETURN;
+END_IF
+
+IF M_AddToHead(pUnit) THEN
+	M_RelocateToHead := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RelocateToTail" Id="{3d3ee349-93fb-412a-b2e0-e553994188ff}">
+      <Declaration><![CDATA[METHOD M_RelocateToTail : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	pUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnit := M_RemoveAtLocation(M_GetCurrentPosition());
+
+IF pUnit = NULL THEN
+	RETURN;
+END_IF
+
+IF M_AddToTail(pUnit) THEN
+	M_RelocateToTail := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RemoveAtLocation" Id="{9227fb3e-6a0f-4f71-bd9d-820303e88046}">
+      <Declaration><![CDATA[METHOD M_RemoveAtLocation : POINTER TO ST_LinkedListUnit
+VAR_INPUT
+	in_nLocation : UINT;
+END_VAR
+VAR
+	nCounter : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	bIsEmpty 
+	OR in_nLocation > nUnitsInTheList
+	OR in_nLocation = 0
+	THEN
+	
+	IF  in_nLocation = 0 
+		AND NOT bIsEmpty 
+		THEN
+		
+		bTriedToRelocatePositionZero := TRUE;
+	END_IF
+	
+	RETURN;
+END_IF
+
+pPointer := pHead;
+IF in_nLocation = 1 THEN
+	M_RemoveAtLocation := M_RemoveHead();
+	RETURN;
+ELSIF in_nLocation = nUnitsInTheList THEN
+	M_RemoveAtLocation := M_RemoveTail();
+	RETURN;
+ELSE
+	
+	FOR nCounter := 2 TO in_nLocation DO
+		pPointer := pPointer^.pNext;
+	END_FOR
+
+END_IF
+
+M_RemoveAtLocation := pPointer;
+
+pPointer := pPointer^.pPrevious;
+pPointer^.pNext := pPointer^.pNext^.pNext;
+pPointer := pPointer^.pNext;
+pPointer^.pPrevious := pPointer^.pPrevious^.pPrevious;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RemoveHead" Id="{eeabe269-a852-42ee-a5ca-901cc18c8c4e}">
+      <Declaration><![CDATA[METHOD M_RemoveHead : POINTER TO ST_LinkedListUnit
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsEmpty THEN
+	RETURN;
+END_IF
+
+M_RemoveHead := pHead;
+
+IF nUnitsInTheList = 1 THEN
+	nUnitsInTheList := 0;
+	bIsEmpty := TRUE;	
+	pHead := NULL;
+	pTail := NULL;
+	pPointer := NULL;
+ELSE
+	pHead := pHead^.pNext;
+	pHead^.pPrevious := NULL; 	
+	nUnitsInTheList := nUnitsInTheList - 1;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_RemoveTail" Id="{6ac5a376-447f-4738-a4c7-a14fa0bc6d7c}">
+      <Declaration><![CDATA[METHOD M_RemoveTail : POINTER TO ST_LinkedListUnit
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bIsEmpty THEN
+	RETURN;
+END_IF
+
+M_RemoveTail := pTail;
+
+IF nUnitsInTheList = 1 THEN
+	nUnitsInTheList := 0;
+	bIsEmpty := TRUE;	
+	pHead := NULL;
+	pTail := NULL;
+	pPointer := NULL;
+ELSE
+	pTail := pTail^.pPrevious;
+	pTail^.pNext := NULL; 	
+	nUnitsInTheList := nUnitsInTheList - 1;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_GenericLinkedList">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_AddToHead">
+      <LineId Id="5" Count="2" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="37" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_AddToTail">
+      <LineId Id="6" Count="10" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="17" Count="11" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_FindUnit">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_GetCurrent">
+      <LineId Id="6" Count="2" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_GetCurrentPosition">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_GetHead">
+      <LineId Id="6" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_GetNext">
+      <LineId Id="6" Count="3" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="17" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_GetTail">
+      <LineId Id="6" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_InitLinkedList">
+      <LineId Id="14" Count="2" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="23" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="29" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_RelocateToHead">
+      <LineId Id="8" Count="7" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_RelocateToTail">
+      <LineId Id="24" Count="8" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_RemoveAtLocation">
+      <LineId Id="6" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="60" Count="1" />
+      <LineId Id="55" Count="1" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="29" Count="3" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="39" Count="2" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="44" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_RemoveHead">
+      <LineId Id="6" Count="2" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="11" Count="4" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GenericLinkedList.M_RemoveTail">
+      <LineId Id="6" Count="16" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

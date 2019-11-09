@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <Itf Name="I_Sequence" Id="{e89512ea-61d6-43b7-b199-5a817539501a}">
+    <Declaration><![CDATA[INTERFACE I_Sequence
+]]></Declaration>
+    <Method Name="M_Sequence" Id="{ce1a6882-dcb5-4450-b266-6ac9d5d4cc1c}">
+      <Declaration><![CDATA[METHOD M_Sequence : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

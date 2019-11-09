@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_LinkedListUnit" Id="{9bac3999-a0bf-433f-9f9b-a1b5e3cbf78b}">
+    <Declaration><![CDATA[TYPE ST_LinkedListUnit :
+STRUCT
+	
+	// 		HEAD <--------------  --------------> TAIL
+	//				Previous			Next
+	
+	pNext : POINTER TO ST_LinkedListUnit;
+	pPrevious : POINTER TO ST_LinkedListUnit;
+	pVoid : POINTER TO PVOID; // Pointer to the data
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_MessageLinkedList" Id="{0a675e83-a9f7-478c-a06d-302d55c7e31e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_MessageLinkedList EXTENDS FB_GenericLinkedList
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="M_AddMessageToHead" Id="{ae86983b-ba05-4b50-b320-34d1277b4b1c}">
+      <Declaration><![CDATA[METHOD M_AddMessageToHead : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+	pMessageToAdd : POINTER TO ST_Message;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnitToAdd^.pVoid := pMessageToAdd;
+SUPER^.M_AddToHead(pUnitToAdd);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_AddMessageToTail" Id="{1d371728-ade8-492b-b36e-6c54ca1c2f22}">
+      <Declaration><![CDATA[METHOD M_AddMessageToTail : BOOL
+VAR_INPUT
+	pUnitToAdd : POINTER TO ST_LinkedListUnit;
+	pMessageToAdd : POINTER TO ST_Message;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pUnitToAdd^.pVoid := pMessageToAdd;
+SUPER^.M_AddToTail(pUnitToAdd);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetHeadMessage" Id="{8e0c366b-4593-453a-b33d-c3a611a6d960}">
+      <Declaration><![CDATA[METHOD M_GetHeadMessage : POINTER TO ST_Message
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetHead();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetHeadMessage := stUnit^.pVoid;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetNextMessage" Id="{6aa4a480-4c10-4662-a778-e37cf54a11ac}">
+      <Declaration><![CDATA[METHOD M_GetNextMessage : POINTER TO ST_Message
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="M_GetTailMessage" Id="{fb54e427-3cac-40e4-9bca-d1112e937033}">
+      <Declaration><![CDATA[METHOD M_GetTailMessage : POINTER TO ST_Message
+VAR_INPUT
+END_VAR
+VAR
+	stUnit : POINTER TO ST_LinkedListUnit;
+
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stUnit := SUPER^.M_GetTail();
+
+IF stUnit = NULL THEN
+	RETURN;
+END_IF
+
+M_GetTailMessage := stUnit^.pVoid;
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_MessageLinkedList">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MessageLinkedList.M_AddMessageToHead">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MessageLinkedList.M_AddMessageToTail">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MessageLinkedList.M_GetHeadMessage">
+      <LineId Id="5" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="13" Count="3" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MessageLinkedList.M_GetNextMessage">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MessageLinkedList.M_GetTailMessage">
+      <LineId Id="6" Count="0" />
+      <LineId Id="14" Count="2" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

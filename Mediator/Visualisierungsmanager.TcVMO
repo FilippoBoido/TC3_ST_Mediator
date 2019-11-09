@@ -44,12 +44,12 @@
             <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
               <v>FB_Init</v>
               <v>b54e90a0-8217-437e-b1a9-bb7f1992e27d</v>
-              <v>FB_Exit</v>
-              <v>5b7b4fe9-87be-49fa-b950-cb82343f586b</v>
               <v>FB_Reinit</v>
               <v>fdece8b1-8042-4cf4-8895-2c6028f8aab7</v>
+              <v>FB_Exit</v>
+              <v>5b7b4fe9-87be-49fa-b950-cb82343f586b</v>
             </d>
-            <v n="FbName">"NotImportant"</v>
+            <v n="FbName">"__VisuInitInstantiation_Fb"</v>
             <v n="FbGuid">{1b69246e-b165-4474-ab3a-c2203c550bc8}</v>
           </o>
           <o n="TargetProperties" t="VisualizationTargetProperties">
@@ -465,34 +465,34 @@
             <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
               <v>ExecuteLooseCapture</v>
               <v>dd96070f-924e-4973-b15e-ec713bdaa8b4</v>
-              <v>ExecuteMouseUp</v>
-              <v>2ac43f2f-3ff0-4a5c-ace5-8f38f87256a7</v>
               <v>Init</v>
               <v>5b6df7d1-314c-4c8d-b0b6-2262c61d1e39</v>
               <v>FB_Exit</v>
               <v>7efcc2f8-5e28-4667-ba08-7c79dda62e82</v>
               <v>ExecuteMouseDblClick</v>
               <v>383a0aad-b23f-4f05-bd34-0314fc7abf94</v>
-              <v>GetElementInfo</v>
-              <v>d2bc4543-7ba2-43b9-8abc-8068ccfbfc81</v>
               <v>ExecuteMouseDown</v>
               <v>993e6e45-2c3c-42aa-a92a-5c4d3f48248d</v>
+              <v>ExecuteMouseUp</v>
+              <v>2ac43f2f-3ff0-4a5c-ace5-8f38f87256a7</v>
+              <v>ExecuteMouseEnter</v>
+              <v>53b92874-2907-453e-9205-993c56615be6</v>
               <v>FB_Reinit</v>
               <v>07a63d21-b701-43a1-92a2-60bed8580d33</v>
-              <v>Initialize</v>
-              <v>67f2ee8c-1ed9-4412-86c6-8297a839af28</v>
-              <v>ExecuteMouseMove</v>
-              <v>545124bd-a7ed-4b8d-a756-5d3563c2e6ea</v>
+              <v>GetElementInfo</v>
+              <v>d2bc4543-7ba2-43b9-8abc-8068ccfbfc81</v>
+              <v>abstrGetDefaultCursor</v>
+              <v>50764bca-cdda-446f-9fdc-cd4557b599ad</v>
               <v>ExecuteDialogClosed</v>
               <v>428740a9-a1df-41bd-b079-dd298e5024d6</v>
               <v>ExecuteKeyUp</v>
               <v>16d111b8-82f1-4827-9938-cbe440afdac1</v>
               <v>ExecuteKeyDown</v>
               <v>f4af1cac-ba3b-4ec0-b2d9-3d54ad97b59e</v>
-              <v>abstrGetDefaultCursor</v>
-              <v>50764bca-cdda-446f-9fdc-cd4557b599ad</v>
-              <v>ExecuteMouseEnter</v>
-              <v>53b92874-2907-453e-9205-993c56615be6</v>
+              <v>ExecuteMouseMove</v>
+              <v>545124bd-a7ed-4b8d-a756-5d3563c2e6ea</v>
+              <v>Initialize</v>
+              <v>67f2ee8c-1ed9-4412-86c6-8297a839af28</v>
               <v>ExecuteMouseLeave</v>
               <v>a6978293-f0a5-448f-ac76-ca9ac9a1e85e</v>
               <v>FB_Init</v>
@@ -585,7 +585,7 @@
         <Data>
           <o xml:space="preserve" t="TargetVisualizationObject">
             <o n="ViewSettings" t="TargetVisualizationViewSettings">
-              <v n="StartVisu">"VISU_MAIN"</v>
+              <v n="StartVisu">"VISU_DEBUG"</v>
               <n n="HtmFileName" />
               <v n="UpdateRate">200</v>
               <v n="CommBufferSize">50000</v>

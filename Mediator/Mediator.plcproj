@@ -31,6 +31,9 @@
     <Compile Include="DUTs\E_PeersList.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\ST_LinkedListUnit.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\ST_Mailbox.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -49,23 +52,50 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\FB_Mediator.TcPOU">
+    <Compile Include="POUs\Conveyor\E_ConveyorPeerSequence.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\FB_Peer.TcPOU">
+    <Compile Include="POUs\Conveyor\FB_Conveyor.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Conveyor\FB_ConveyorPeerSequence.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Conveyor\I_ConveyorSequence.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\GVL_Constants.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="POUs\I_Peer.TcIO">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\NewMessage.TcPOU">
+    <Compile Include="POUs\System\FB_Sensor.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\I_Sequence.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\LinkedList\FB_GenericLinkedList.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\LinkedList\FB_MessageLinkedList.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\LinkedList\FB_PeerLinkedList.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\Messaging\FB_Mediator.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\Messaging\FB_Peer.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\Messaging\I_Peer.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\System\Messaging\Message.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Visualisierungsmanager.TcVMO">
@@ -75,9 +105,14 @@
       <SubType>Code</SubType>
       <DependentUpon>Visualisierungsmanager.TcVMO</DependentUpon>
     </Compile>
+    <Compile Include="VISUs\VISU_DEBUG.TcVIS">
+      <SubType>Code</SubType>
+      <DependentUpon>Visualisierungsmanager.TcVMO</DependentUpon>
+    </Compile>
     <Compile Include="VISUs\VISU_MAIN.TcVIS">
       <SubType>Code</SubType>
       <DependentUpon>Visualisierungsmanager.TcVMO</DependentUpon>
+      <ExcludeFromBuild>true</ExcludeFromBuild>
     </Compile>
     <Compile Include="VISU_TASK.TcTTO">
       <SubType>Code</SubType>
@@ -86,6 +121,10 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
+    <Folder Include="POUs\Conveyor" />
+    <Folder Include="POUs\System" />
+    <Folder Include="POUs\System\LinkedList" />
+    <Folder Include="POUs\System\Messaging" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>
